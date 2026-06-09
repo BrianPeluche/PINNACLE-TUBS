@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  /* Near-black base */
+  --color-background: #0a0a0c;
+  /* Steam white */
+  --color-foreground: #f4f1ea;
+  /* Warm amber accent (underwater tub lighting) */
+  --color-accent: #e3a23c;
+  --color-accent-foreground: #0a0a0c;
+  /* Subtle surfaces/borders on the dark base */
+  --color-muted: #18181b;
+  --color-muted-foreground: #a1a0a0;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
