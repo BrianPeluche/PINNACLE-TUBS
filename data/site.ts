@@ -18,6 +18,11 @@ export const siteConfig = {
   social: {
     instagram: "https://instagram.com/pinnacle.tubs",
   },
+  hero: {
+    videoSrc: "/assets/hot-tub-at-dusk-surrounded-by-tropical-plants.mp4",
+    poster: "/assets/hero-poster.jpg",
+    title: ["PINNACLE", "TUBS"],
+  },
   nav: [
     { label: "Home", href: "/" },
     { label: "Tubs", href: "/tubs" },

@@ -21,3 +21,24 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
 }
+
+@keyframes hero-tagline-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-tagline {
+  animation: hero-tagline-in 1s ease-out 0.4s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-tagline {
+    animation: none;
+  }
+}
