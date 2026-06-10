@@ -1,40 +1,59 @@
+import { TITLE_PATHS, type TitlePath } from "./titlePaths";
+
 /**
  * Shared geometry for the hero title, used by both the white overlay SVG
- * (inline, fades out on scroll) and the mask image (data URI). The mask SVG
- * renders in its own document and cannot inherit page CSS, so the font stack
- * must be spelled out identically in both places or the letterforms won't
- * align when the overlay fades into the mask.
+ * (inline, fades out on scroll) and the mask image (data URI). Letterforms
+ * are pre-generated path outlines — never <text> — because an SVG-as-image
+ * resolves fonts independently of the page (and can't load web fonts), which
+ * produced misaligned overlay/mask letterforms on iOS. Identical path data +
+ * identical transforms = pixel-identical layers on every engine.
  */
-export const TITLE_FONT_STACK =
-  "ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif";
-
-export const TITLE_FONT_WEIGHT = 800;
+export interface TitleLine {
+  d: string;
+  /** Positions the path (baseline y=0, 100 units/em) into viewport space. */
+  transform: string;
+}
 
 export interface TitleGeometry {
-  fontSize: number;
-  letterSpacing: number;
-  cx: number;
-  line1Y: number;
-  line2Y: number;
+  line1: TitleLine;
+  line2: TitleLine;
   barX: number;
   barY: number;
   barWidth: number;
   barHeight: number;
 }
 
+function placeLine(path: TitlePath, fontSize: number, cx: number, baselineY: number): TitleLine {
+  const s = fontSize / 100;
+  return {
+    d: path.d,
+    transform: `translate(${cx - (path.width * s) / 2} ${baselineY}) scale(${s})`,
+  };
+}
+
 /** Same layout math at any viewport size; coordinates are viewport px. */
-export function computeTitleGeometry(width: number, height: number): TitleGeometry {
+export function computeTitleGeometry(
+  width: number,
+  height: number,
+  title: readonly [string, string],
+): TitleGeometry {
+  const line1Path = TITLE_PATHS[title[0]];
+  const line2Path = TITLE_PATHS[title[1]];
+  if (!line1Path || !line2Path) {
+    throw new Error(
+      `No pre-generated path outline for hero title "${title[0]} ${title[1]}" — regenerate titlePaths.ts`,
+    );
+  }
   const fontSize = Math.min(Math.max(width / 8.5, 32), 320);
   const barWidth = width * 0.14;
   const barHeight = height * 0.015;
   const cx = width / 2;
   const cy = height / 2;
+  const line1Y = cy - barHeight / 2 - fontSize * 0.55;
+  const line2Y = cy + barHeight / 2 + fontSize * 0.55 + fontSize * 0.8;
   return {
-    fontSize,
-    letterSpacing: fontSize * 0.05,
-    cx,
-    line1Y: cy - barHeight / 2 - fontSize * 0.55,
-    line2Y: cy + barHeight / 2 + fontSize * 0.55 + fontSize * 0.8,
+    line1: placeLine(line1Path, fontSize, cx, line1Y),
+    line2: placeLine(line2Path, fontSize, cx, line2Y),
     barX: cx - barWidth / 2,
     barY: cy - barHeight / 2,
     barWidth,
@@ -45,26 +64,15 @@ export function computeTitleGeometry(width: number, height: number): TitleGeomet
 /**
  * The mask as a standalone SVG image (white title + bar on transparent,
  * alpha-masked). A data URI is used instead of a CSS reference to an inline
- * <mask> element because WebKit ignores `mask-image: url(#id)` — that was
- * the iOS Safari blank-hero bug. The zoom animates mask-size about
- * mask-position: center, which equals scaling the old mask group about the
- * viewport center.
+ * <mask> element because WebKit ignores `mask-image: url(#id)`. The zoom
+ * animates mask-size about mask-position: center.
  */
-export function buildMaskDataUri(
-  width: number,
-  height: number,
-  title: readonly [string, string],
-  g: TitleGeometry,
-): string {
-  const text = (line: string, y: number) =>
-    `<text x="${g.cx}" y="${y}" text-anchor="middle" font-size="${g.fontSize}" ` +
-    `font-weight="${TITLE_FONT_WEIGHT}" letter-spacing="${g.letterSpacing}" ` +
-    `font-family="${TITLE_FONT_STACK}" fill="white">${line}</text>`;
+export function buildMaskDataUri(width: number, height: number, g: TitleGeometry): string {
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">` +
-    text(title[0], g.line1Y) +
+    `<path transform="${g.line1.transform}" d="${g.line1.d}" fill="white"/>` +
     `<rect x="${g.barX}" y="${g.barY}" width="${g.barWidth}" height="${g.barHeight}" fill="white"/>` +
-    text(title[1], g.line2Y) +
+    `<path transform="${g.line2.transform}" d="${g.line2.d}" fill="white"/>` +
     `</svg>`;
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 }

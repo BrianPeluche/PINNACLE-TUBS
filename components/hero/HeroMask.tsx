@@ -1,11 +1,10 @@
 import Image from "next/image";
 import { useMemo, type CSSProperties, type RefObject } from "react";
-import {
-  buildMaskDataUri,
-  computeTitleGeometry,
-  TITLE_FONT_STACK,
-  TITLE_FONT_WEIGHT,
-} from "./titleGeometry";
+import { buildMaskDataUri, computeTitleGeometry } from "./titleGeometry";
+
+/** Aspect ratio of the hero footage and poster (1920x1080). Update together
+ * with the asset if it is ever replaced. */
+const MEDIA_ASPECT = 16 / 9;
 
 interface HeroMaskProps {
   /** Viewport width/height in px — also the mask's user-space coordinate system. */
@@ -26,12 +25,12 @@ interface HeroMaskProps {
 }
 
 /**
- * Two stacked layers: media (video/poster) masked to the "PINNACLE TUBS"
- * letterforms, and an inline SVG of the same title in solid foreground white
- * on top. At rest the white title covers the letterform holes exactly; the
- * scroll timeline fades the white away (revealing media through the letters),
- * then zooms the mask open. The bar between the lines is the zoom anchor —
- * once it scales past the viewport the media is fully revealed.
+ * Two stacked layers: media (video over poster fallback) masked to the
+ * "PINNACLE TUBS" letterforms, and an inline SVG of the same title in solid
+ * foreground white on top. At rest the white title covers the letterform
+ * holes exactly; the scroll timeline fades the white away, then zooms the
+ * mask open. The bar between the lines is the zoom anchor — once it scales
+ * past the viewport the media is fully revealed.
  */
 export function HeroMask({
   width,
@@ -44,9 +43,9 @@ export function HeroMask({
   overlayRef,
   videoRef,
 }: HeroMaskProps) {
-  const geometry = useMemo(() => computeTitleGeometry(width, height), [width, height]);
+  const geometry = useMemo(() => computeTitleGeometry(width, height, title), [width, height, title]);
   const maskStyle = useMemo<CSSProperties>(() => {
-    const uri = buildMaskDataUri(width, height, title, geometry);
+    const uri = buildMaskDataUri(width, height, geometry);
     return {
       maskImage: uri,
       WebkitMaskImage: uri,
@@ -57,18 +56,41 @@ export function HeroMask({
       maskSize: "100% 100%",
       WebkitMaskSize: "100% 100%",
     };
-  }, [width, height, title, geometry]);
+  }, [width, height, geometry]);
+
+  // Explicit cover-crop frame shared by video and poster. iOS Safari does
+  // not reliably honor object-fit: cover on <video> (it letterboxed at full
+  // zoom), so the crop is computed here instead of left to the engine.
+  const coverStyle = useMemo<CSSProperties>(() => {
+    const coverWidth = Math.max(width, height * MEDIA_ASPECT);
+    const coverHeight = Math.max(height, width / MEDIA_ASPECT);
+    return {
+      position: "absolute",
+      width: coverWidth,
+      height: coverHeight,
+      left: (width - coverWidth) / 2,
+      top: (height - coverHeight) / 2,
+      // Tailwind preflight sets video { max-width: 100% }, which would clamp
+      // the frame back to the viewport width and reintroduce letterboxing.
+      maxWidth: "none",
+      // The frame's aspect equals the media's, so cover only matters if
+      // MEDIA_ASPECT ever drifts from the real file — then we crop, not bar.
+      objectFit: "cover",
+    };
+  }, [width, height]);
 
   return (
     <>
-      <div ref={maskDivRef} className="absolute inset-0 h-full w-full" style={maskStyle}>
+      <div ref={maskDivRef} className="absolute inset-0 h-full w-full overflow-hidden" style={maskStyle}>
         {/* Poster always sits behind the video: if a device ever refuses to
             paint video frames, the letters reveal footage instead of black. */}
-        <Image src={poster} alt="" fill priority sizes="100vw" className="object-cover" />
+        <div style={coverStyle}>
+          <Image src={poster} alt="" fill priority sizes="100vw" className="object-cover" />
+        </div>
         {animated && (
           <video
             ref={videoRef}
-            className="absolute inset-0 h-full w-full object-cover"
+            style={coverStyle}
             src={videoSrc}
             poster={poster}
             muted
@@ -86,26 +108,15 @@ export function HeroMask({
         aria-hidden="true"
         focusable="false"
       >
-        <g
-          fill="var(--color-foreground)"
-          fontFamily={TITLE_FONT_STACK}
-          fontWeight={TITLE_FONT_WEIGHT}
-          fontSize={geometry.fontSize}
-          letterSpacing={geometry.letterSpacing}
-          textAnchor="middle"
-        >
-          <text x={geometry.cx} y={geometry.line1Y}>
-            {title[0]}
-          </text>
+        <g fill="var(--color-foreground)">
+          <path transform={geometry.line1.transform} d={geometry.line1.d} />
           <rect
             x={geometry.barX}
             y={geometry.barY}
             width={geometry.barWidth}
             height={geometry.barHeight}
           />
-          <text x={geometry.cx} y={geometry.line2Y}>
-            {title[1]}
-          </text>
+          <path transform={geometry.line2.transform} d={geometry.line2.d} />
         </g>
       </svg>
     </>
