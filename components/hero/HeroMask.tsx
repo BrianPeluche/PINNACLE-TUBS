@@ -13,6 +13,8 @@ interface HeroMaskProps {
   animated: boolean;
   /** The scaled group inside the mask — animated by useHeroScroll. */
   zoomGroupRef: RefObject<SVGGElement | null>;
+  /** The video element — scrubbed (currentTime) by useHeroScroll. */
+  videoRef: RefObject<HTMLVideoElement | null>;
 }
 
 /**
@@ -29,6 +31,7 @@ export function HeroMask({
   poster,
   animated,
   zoomGroupRef,
+  videoRef,
 }: HeroMaskProps) {
   const fontSize = Math.min(Math.max(width / 8.5, 32), 320);
   const barWidth = width * 0.14;
@@ -46,14 +49,13 @@ export function HeroMask({
       >
         {animated ? (
           <video
+            ref={videoRef}
             className="h-full w-full object-cover"
             src={videoSrc}
             poster={poster}
             muted
             playsInline
-            autoPlay
-            loop
-            preload="metadata"
+            preload="auto"
             aria-hidden="true"
           />
         ) : (
