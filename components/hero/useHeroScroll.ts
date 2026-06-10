@@ -3,12 +3,16 @@
 import { useEffect, useSyncExternalStore, type RefObject } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
-/** How much the mask's zoom anchor scales up — see HeroMask for the math. */
+/** How much the mask zooms (mask-size 100% -> 8000%) — the bar between the
+ * title lines covers the viewport once height * 0.015 * scale >= height. */
 const ZOOM_SCALE = 80;
+/** Portion of the pin spent fading the white title before the zoom starts. */
+const WHITE_FADE_PORTION = 0.2;
 
 interface HeroScrollRefs {
   sectionRef: RefObject<HTMLElement | null>;
-  zoomGroupRef: RefObject<SVGGElement | null>;
+  maskDivRef: RefObject<HTMLDivElement | null>;
+  overlayRef: RefObject<SVGSVGElement | null>;
   taglineRef: RefObject<HTMLElement | null>;
   videoRef: RefObject<HTMLVideoElement | null>;
 }
@@ -43,25 +47,33 @@ function useViewportSize(): ViewportSize {
 }
 
 /**
- * Drives the GTA-style scroll-mask hero: pins the section while the mask's
- * zoom anchor scales up to fill the viewport (revealing the full video),
- * the footage is scrubbed (video.currentTime) in lockstep with the same
- * timeline, and the tagline fades out early. The video never plays on its
- * own — scroll position is the only thing that advances it.
+ * Drives the hero's pinned, scrubbed timeline:
+ *   0    -> 0.2  white title overlay fades out (video shows through letters)
+ *   0.2  -> 1    mask zooms open (mask-size about center) until media fills
+ *   0    -> 1    footage scrubbed via video.currentTime — the video never
+ *                plays on its own; scroll is the only thing advancing it
+ *   0    -> 0.25 tagline fades out
+ * All segments share one timeline so they reverse together on scroll-up.
+ *
+ * The zoom tweens a proxy and writes mask-size/-webkit-mask-size manually:
+ * GSAP can't be trusted to dual-write prefixed+unprefixed mask props across
+ * engines, and WebKit needs both.
  *
  * `enabled` is false until hydration AND whenever the user prefers reduced
  * motion; the <video> only exists in the DOM once it flips true.
  */
 export function useHeroScroll(
-  { sectionRef, zoomGroupRef, taglineRef, videoRef }: HeroScrollRefs,
+  { sectionRef, maskDivRef, overlayRef, taglineRef, videoRef }: HeroScrollRefs,
   enabled: boolean,
 ) {
   const { width, height } = useViewportSize();
 
   useEffect(() => {
     if (!enabled) return;
+    const maskDiv = maskDivRef.current;
     const video = videoRef.current;
-    if (!sectionRef.current || !zoomGroupRef.current || !taglineRef.current || !video) return;
+    if (!sectionRef.current || !maskDiv || !overlayRef.current || !taglineRef.current || !video)
+      return;
 
     let tl: gsap.core.Timeline;
     const ctx = gsap.context(() => {
@@ -75,11 +87,24 @@ export function useHeroScroll(
         },
       });
 
+      tl.to(overlayRef.current, { opacity: 0, ease: "none", duration: WHITE_FADE_PORTION }, 0);
+
+      const zoom = { scale: 1 };
       tl.to(
-        zoomGroupRef.current,
-        { scale: ZOOM_SCALE, svgOrigin: `${width / 2} ${height / 2}`, ease: "none", duration: 1 },
-        0,
+        zoom,
+        {
+          scale: ZOOM_SCALE,
+          ease: "none",
+          duration: 1 - WHITE_FADE_PORTION,
+          onUpdate: () => {
+            const size = `${zoom.scale * 100}% ${zoom.scale * 100}%`;
+            maskDiv.style.maskSize = size;
+            maskDiv.style.webkitMaskSize = size;
+          },
+        },
+        WHITE_FADE_PORTION,
       );
+
       tl.to(taglineRef.current, { opacity: 0, ease: "none", duration: 0.25 }, 0);
     }, sectionRef);
 
@@ -100,9 +125,12 @@ export function useHeroScroll(
     return () => {
       video.removeEventListener("loadedmetadata", addVideoScrub);
       ctx.revert();
+      // ctx.revert restores the proxy, not the styles written in onUpdate.
+      maskDiv.style.maskSize = "100% 100%";
+      maskDiv.style.webkitMaskSize = "100% 100%";
       ScrollTrigger.refresh();
     };
-  }, [enabled, width, height, sectionRef, zoomGroupRef, taglineRef, videoRef]);
+  }, [enabled, width, height, sectionRef, maskDivRef, overlayRef, taglineRef, videoRef]);
 
   return { width, height };
 }

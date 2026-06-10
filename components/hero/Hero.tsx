@@ -22,26 +22,28 @@ function useHydrated(): boolean {
 }
 
 /**
- * GTA VI–style scroll hero: "PINNACLE TUBS" is cut out of a mask over the
- * hot tub video. Scrolling pins the section and zooms the mask open until
- * the video fills the screen, then the page unpins and content reveals.
- * Degrades to a static masked poster with no pin/zoom for reduced motion.
+ * GTA VI–style scroll hero: "PINNACLE TUBS" starts as a solid white title;
+ * scrolling pins the section, fades the white fill to reveal the hot tub
+ * video through the letterforms, then zooms the mask open until the video
+ * fills the screen and the page unpins. Footage is scrubbed by scroll.
+ * Degrades to the static white-title poster with no pin for reduced motion.
  */
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const zoomGroupRef = useRef<SVGGElement>(null);
+  const maskDivRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<SVGSVGElement>(null);
   const taglineRef = useRef<HTMLSpanElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const reducedMotion = useReducedMotion();
   const animated = useHydrated() && !reducedMotion;
 
   const { width, height } = useHeroScroll(
-    { sectionRef, zoomGroupRef, taglineRef, videoRef },
+    { sectionRef, maskDivRef, overlayRef, taglineRef, videoRef },
     animated,
   );
 
   return (
-    <section ref={sectionRef} className="relative h-screen w-full overflow-hidden bg-background">
+    <section ref={sectionRef} className="relative h-svh w-full overflow-hidden bg-background">
       <HeroMask
         width={width}
         height={height}
@@ -49,7 +51,8 @@ export function Hero() {
         videoSrc={siteConfig.hero.videoSrc}
         poster={siteConfig.hero.poster}
         animated={animated}
-        zoomGroupRef={zoomGroupRef}
+        maskDivRef={maskDivRef}
+        overlayRef={overlayRef}
         videoRef={videoRef}
       />
       <p className="hero-tagline pointer-events-none absolute inset-x-0 bottom-16 px-6 text-center sm:bottom-24">

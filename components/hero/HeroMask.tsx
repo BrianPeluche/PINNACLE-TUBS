@@ -1,5 +1,11 @@
 import Image from "next/image";
-import type { RefObject } from "react";
+import { useMemo, type CSSProperties, type RefObject } from "react";
+import {
+  buildMaskDataUri,
+  computeTitleGeometry,
+  TITLE_FONT_STACK,
+  TITLE_FONT_WEIGHT,
+} from "./titleGeometry";
 
 interface HeroMaskProps {
   /** Viewport width/height in px — also the mask's user-space coordinate system. */
@@ -9,19 +15,23 @@ interface HeroMaskProps {
   title: readonly [string, string];
   videoSrc: string;
   poster: string;
-  /** false (reduced motion): static poster image, mask not animated. */
+  /** false (reduced motion / pre-hydration): static poster, no video element. */
   animated: boolean;
-  /** The scaled group inside the mask — animated by useHeroScroll. */
-  zoomGroupRef: RefObject<SVGGElement | null>;
+  /** The masked media layer — useHeroScroll zooms it via mask-size. */
+  maskDivRef: RefObject<HTMLDivElement | null>;
+  /** The white title overlay — useHeroScroll fades it out first. */
+  overlayRef: RefObject<SVGSVGElement | null>;
   /** The video element — scrubbed (currentTime) by useHeroScroll. */
   videoRef: RefObject<HTMLVideoElement | null>;
 }
 
 /**
- * Renders the masked media layer ("PINNACLE TUBS" cut out of a black mask,
- * revealing video/poster underneath) plus the hidden SVG mask definition.
- * The small bar between the two title lines is the scroll "zoom anchor" —
- * a guaranteed-solid shape useHeroScroll scales until it fills the viewport.
+ * Two stacked layers: media (video/poster) masked to the "PINNACLE TUBS"
+ * letterforms, and an inline SVG of the same title in solid foreground white
+ * on top. At rest the white title covers the letterform holes exactly; the
+ * scroll timeline fades the white away (revealing media through the letters),
+ * then zooms the mask open. The bar between the lines is the zoom anchor —
+ * once it scales past the viewport the media is fully revealed.
  */
 export function HeroMask({
   width,
@@ -30,23 +40,28 @@ export function HeroMask({
   videoSrc,
   poster,
   animated,
-  zoomGroupRef,
+  maskDivRef,
+  overlayRef,
   videoRef,
 }: HeroMaskProps) {
-  const fontSize = Math.min(Math.max(width / 8.5, 32), 320);
-  const barWidth = width * 0.14;
-  const barHeight = height * 0.015;
-  const cx = width / 2;
-  const cy = height / 2;
-  const line1Y = cy - barHeight / 2 - fontSize * 0.55;
-  const line2Y = cy + barHeight / 2 + fontSize * 0.55 + fontSize * 0.8;
+  const geometry = useMemo(() => computeTitleGeometry(width, height), [width, height]);
+  const maskStyle = useMemo<CSSProperties>(() => {
+    const uri = buildMaskDataUri(width, height, title, geometry);
+    return {
+      maskImage: uri,
+      WebkitMaskImage: uri,
+      maskRepeat: "no-repeat",
+      WebkitMaskRepeat: "no-repeat",
+      maskPosition: "center",
+      WebkitMaskPosition: "center",
+      maskSize: "100% 100%",
+      WebkitMaskSize: "100% 100%",
+    };
+  }, [width, height, title, geometry]);
 
   return (
     <>
-      <div
-        className="absolute inset-0 h-full w-full"
-        style={{ maskImage: "url(#hero-mask)", WebkitMaskImage: "url(#hero-mask)" }}
-      >
+      <div ref={maskDivRef} className="absolute inset-0 h-full w-full" style={maskStyle}>
         {animated ? (
           <video
             ref={videoRef}
@@ -62,21 +77,35 @@ export function HeroMask({
           <Image src={poster} alt="" fill priority sizes="100vw" className="object-cover" />
         )}
       </div>
-      <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true" focusable="false">
-        <defs>
-          <mask id="hero-mask" maskUnits="objectBoundingBox" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1" height="1">
-            <rect x="0" y="0" width={width} height={height} fill="black" />
-            <g ref={zoomGroupRef}>
-              <text x={cx} y={line1Y} textAnchor="middle" fontSize={fontSize} fontWeight={800} letterSpacing={fontSize * 0.05} fill="white">
-                {title[0]}
-              </text>
-              <rect x={cx - barWidth / 2} y={cy - barHeight / 2} width={barWidth} height={barHeight} fill="white" />
-              <text x={cx} y={line2Y} textAnchor="middle" fontSize={fontSize} fontWeight={800} letterSpacing={fontSize * 0.05} fill="white">
-                {title[1]}
-              </text>
-            </g>
-          </mask>
-        </defs>
+      <svg
+        ref={overlayRef}
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        viewBox={`0 0 ${width} ${height}`}
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <g
+          fill="var(--color-foreground)"
+          fontFamily={TITLE_FONT_STACK}
+          fontWeight={TITLE_FONT_WEIGHT}
+          fontSize={geometry.fontSize}
+          letterSpacing={geometry.letterSpacing}
+          textAnchor="middle"
+        >
+          <text x={geometry.cx} y={geometry.line1Y}>
+            {title[0]}
+          </text>
+          <rect
+            x={geometry.barX}
+            y={geometry.barY}
+            width={geometry.barWidth}
+            height={geometry.barHeight}
+          />
+          <text x={geometry.cx} y={geometry.line2Y}>
+            {title[1]}
+          </text>
+        </g>
       </svg>
     </>
   );
