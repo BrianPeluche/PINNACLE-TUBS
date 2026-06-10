@@ -62,10 +62,13 @@ export function HeroMask({
   return (
     <>
       <div ref={maskDivRef} className="absolute inset-0 h-full w-full" style={maskStyle}>
-        {animated ? (
+        {/* Poster always sits behind the video: if a device ever refuses to
+            paint video frames, the letters reveal footage instead of black. */}
+        <Image src={poster} alt="" fill priority sizes="100vw" className="object-cover" />
+        {animated && (
           <video
             ref={videoRef}
-            className="h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
             src={videoSrc}
             poster={poster}
             muted
@@ -73,8 +76,6 @@ export function HeroMask({
             preload="auto"
             aria-hidden="true"
           />
-        ) : (
-          <Image src={poster} alt="" fill priority sizes="100vw" className="object-cover" />
         )}
       </div>
       <svg

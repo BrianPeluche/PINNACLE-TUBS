@@ -5,6 +5,7 @@ import { siteConfig } from "@/data/site";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { HeroMask } from "./HeroMask";
 import { useHeroScroll } from "./useHeroScroll";
+import { useVideoUnlock } from "./useVideoUnlock";
 
 const noopSubscribe = () => () => {};
 
@@ -41,6 +42,7 @@ export function Hero() {
     { sectionRef, maskDivRef, overlayRef, taglineRef, videoRef },
     animated,
   );
+  useVideoUnlock(videoRef, animated);
 
   return (
     <section ref={sectionRef} className="relative h-svh w-full overflow-hidden bg-background">
