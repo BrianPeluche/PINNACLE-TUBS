@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { siteConfig } from "@/data/site";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { BUILD_ID, HeroDebug } from "./HeroDebug";
 import { HeroMask } from "./HeroMask";
 import { useHeroScroll } from "./useHeroScroll";
 import { useVideoUnlock } from "./useVideoUnlock";
@@ -36,13 +37,22 @@ export function Hero() {
   const taglineRef = useRef<HTMLSpanElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const reducedMotion = useReducedMotion();
-  const animated = useHydrated() && !reducedMotion;
+  const hydrated = useHydrated();
+  const animated = hydrated && !reducedMotion;
 
   const { width, height } = useHeroScroll(
     { sectionRef, maskDivRef, overlayRef, taglineRef, videoRef },
     animated,
   );
   useVideoUnlock(videoRef, animated);
+
+  // Build stamp on every load so device tests can confirm which deployment
+  // they are judging (kills stale-cache ambiguity).
+  useEffect(() => {
+    console.info(`[pinnacle-tubs] hero build ${BUILD_ID}`);
+  }, []);
+
+  const debug = hydrated && /[?&]debug=hero(&|$)/.test(window.location.search);
 
   return (
     <section ref={sectionRef} className="relative h-svh w-full overflow-hidden bg-background">
@@ -65,6 +75,15 @@ export function Hero() {
           {siteConfig.tagline}
         </span>
       </p>
+      {debug && (
+        <HeroDebug
+          sectionRef={sectionRef}
+          overlayRef={overlayRef}
+          maskDivRef={maskDivRef}
+          geometryWidth={width}
+          geometryHeight={height}
+        />
+      )}
     </section>
   );
 }

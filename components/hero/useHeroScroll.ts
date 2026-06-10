@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useSyncExternalStore, type RefObject } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 /** How much the mask zooms (mask-size 100% -> 8000%) — the bar between the
@@ -17,33 +17,41 @@ interface HeroScrollRefs {
   videoRef: RefObject<HTMLVideoElement | null>;
 }
 
-interface ViewportSize {
+interface BoxSize {
   width: number;
   height: number;
 }
 
-const DEFAULT_SIZE: ViewportSize = { width: 1920, height: 1080 };
-let cachedSize: ViewportSize = DEFAULT_SIZE;
+/** SSR/first-render guess; corrected by the ResizeObserver after mount. */
+const DEFAULT_SIZE: BoxSize = { width: 1920, height: 1080 };
 
-function getSnapshot(): ViewportSize {
-  if (cachedSize.width !== window.innerWidth || cachedSize.height !== window.innerHeight) {
-    cachedSize = { width: window.innerWidth, height: window.innerHeight };
-  }
-  return cachedSize;
-}
+/**
+ * The single viewport source for the whole hero: the section's own rendered
+ * box (h-svh). On real iOS, window.innerHeight diverges from the svh box
+ * when the toolbar collapses mid-scroll — geometry computed from innerHeight
+ * then disagrees with the box the overlay and mask actually render into,
+ * which misaligned the two title copies on device. Measuring the section
+ * itself makes that divergence impossible and stays stable through toolbar
+ * collapse (no mid-pin rebuild churn).
+ */
+function useSectionSize(sectionRef: RefObject<HTMLElement | null>): BoxSize {
+  const [size, setSize] = useState<BoxSize>(DEFAULT_SIZE);
 
-function getServerSnapshot(): ViewportSize {
-  return DEFAULT_SIZE;
-}
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const r = entries[0].contentRect;
+      const next = { width: Math.round(r.width), height: Math.round(r.height) };
+      setSize((prev) =>
+        prev.width === next.width && prev.height === next.height ? prev : next,
+      );
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [sectionRef]);
 
-function subscribe(onChange: () => void) {
-  window.addEventListener("resize", onChange);
-  return () => window.removeEventListener("resize", onChange);
-}
-
-/** Tracks viewport size (drives mask geometry) and updates on resize. */
-function useViewportSize(): ViewportSize {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  return size;
 }
 
 /**
@@ -66,7 +74,7 @@ export function useHeroScroll(
   { sectionRef, maskDivRef, overlayRef, taglineRef, videoRef }: HeroScrollRefs,
   enabled: boolean,
 ) {
-  const { width, height } = useViewportSize();
+  const { width, height } = useSectionSize(sectionRef);
 
   useEffect(() => {
     if (!enabled) return;
