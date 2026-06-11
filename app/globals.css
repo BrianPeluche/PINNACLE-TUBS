@@ -8,6 +8,8 @@
   /* Warm amber accent (underwater tub lighting) */
   --color-accent: #e3a23c;
   --color-accent-foreground: #0a0a0c;
+  /* Dusk pink pulled from the sunset footage — statement subheads */
+  --color-dusk: #e6a4ad;
   /* Subtle surfaces/borders on the dark base */
   --color-muted: #18181b;
   --color-muted-foreground: #a1a0a0;

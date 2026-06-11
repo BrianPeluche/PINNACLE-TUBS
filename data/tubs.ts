@@ -1,52 +1,56 @@
-export type TubStatus = "in-stock" | "out-of-stock";
+export type TubStatus = "in-stock" | "coming-soon" | "out-of-stock";
 
 export interface Tub {
   /** URL-safe identifier, also used for image filenames. */
   id: string;
   name: string;
-  /** Price in whole USD. `null` when unavailable (e.g. out of stock). */
+  /** Price in whole USD. `null` renders as "Call for details". */
   price: number | null;
   status: TubStatus;
   description: string;
-  /** Path under /public, e.g. "/assets/tubs/tarn-23.jpg" */
-  image: string;
+  /** Path under /public, e.g. "/assets/dsc01673-web.jpg". `null` renders a placeholder card. */
+  image: string | null;
 }
 
+/*
+ * TO ADD A REAL MODEL: copy the template below into the `tubs` array and
+ * fill it in. Nothing else anywhere in the site needs to change — the Tubs
+ * page renders whatever is in this array, and entries with status
+ * "coming-soon" / price null show a "Call for details" CTA instead of a
+ * price.
+ *
+ * {
+ *   id: "model-name-size",            // unique, url-safe
+ *   name: "Model Name",
+ *   price: 8500,                      // or null for "Call for details"
+ *   status: "in-stock",               // "in-stock" | "coming-soon" | "out-of-stock"
+ *   description: "One or two sentences about the spa.",
+ *   image: "/assets/your-photo-web.jpg",  // or null for a placeholder card
+ * },
+ */
 export const tubs: Tub[] = [
   {
-    id: "tarn-23",
-    name: "Tarn 23",
-    price: 7000,
-    status: "in-stock",
-    description:
-      "A compact, efficient spa that delivers full-size hydrotherapy in a space-saving footprint.",
-    image: "/assets/tubs/tarn-23.jpg",
-  },
-  {
-    id: "yosemite-31",
-    name: "Yosemite 31",
-    price: 9400,
-    status: "in-stock",
-    description:
-      "A family-sized spa with multiple seating zones and a powerful jet layout for full-body relief.",
-    image: "/assets/tubs/yosemite-31.jpg",
-  },
-  {
-    id: "tahoe-31",
-    name: "Tahoe 31",
+    id: "coming-soon-1",
+    name: "Coming soon",
     price: null,
-    status: "out-of-stock",
-    description:
-      "Our most popular large-capacity spa, built for entertaining and deep-muscle therapy.",
-    image: "/assets/tubs/tahoe-31.jpg",
+    status: "coming-soon",
+    description: "Inventory changes seasonally — call for current models and pricing.",
+    image: null,
   },
   {
-    id: "zion-31",
-    name: "Zion 31",
-    price: 10000,
-    status: "in-stock",
-    description:
-      "The flagship model: premium jet count, lounge seating, and our most advanced ozone system.",
-    image: "/assets/tubs/zion-31.jpg",
+    id: "coming-soon-2",
+    name: "Coming soon",
+    price: null,
+    status: "coming-soon",
+    description: "Inventory changes seasonally — call for current models and pricing.",
+    image: null,
+  },
+  {
+    id: "coming-soon-3",
+    name: "Coming soon",
+    price: null,
+    status: "coming-soon",
+    description: "Inventory changes seasonally — call for current models and pricing.",
+    image: null,
   },
 ];

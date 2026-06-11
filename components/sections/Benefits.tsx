@@ -1,37 +1,27 @@
 "use client";
 
-import { useRef } from "react";
 import { siteConfig } from "@/data/site";
-import { useReveal } from "@/lib/useReveal";
-import { VideoBackground } from "@/lib/VideoBackground";
-import { SectionHeading } from "./SectionHeading";
+import { CollageSection } from "./CollageSection";
 
-/** "Why buy a hot tub": health benefits over full-bleed jet-water footage. */
+/** "Why buy a hot tub": health benefits, jet-water video in the collage. */
 export function Benefits() {
-  const sectionRef = useRef<HTMLElement>(null);
-  useReveal(sectionRef);
   const copy = siteConfig.sections.benefits;
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden py-24 sm:py-36">
-      <VideoBackground src={copy.video.src} poster={copy.video.poster} />
-      <div className="absolute inset-0 bg-background/75" aria-hidden="true" />
-      <div className="relative mx-auto max-w-6xl px-6">
-        <SectionHeading eyebrow={copy.eyebrow} title={copy.title} />
-        <ul className="mt-14 grid gap-6 sm:grid-cols-2">
-          {copy.items.map((item, i) => (
-            <li
-              key={item.title}
-              data-reveal
-              data-reveal-delay={(i % 2) * 0.12}
-              className="rounded-lg border border-foreground/10 bg-background/60 p-6 backdrop-blur-sm"
-            >
-              <h3 className="text-lg font-bold">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
+    <CollageSection
+      eyebrow={copy.eyebrow}
+      title={copy.title}
+      statement={copy.statement}
+      cards={copy.collage}
+      collageSide="right"
+    >
+      <ul className="space-y-3">
+        {copy.items.map((item) => (
+          <li key={item.title}>
+            <strong className="font-semibold text-foreground">{item.title}</strong> — {item.body}
+          </li>
+        ))}
+      </ul>
+    </CollageSection>
   );
 }
