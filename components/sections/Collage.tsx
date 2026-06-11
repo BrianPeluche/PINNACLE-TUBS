@@ -2,50 +2,10 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { watchBodyHeightForRefresh } from "@/lib/scrollRefresh";
 import { VideoBackground } from "@/lib/VideoBackground";
-
-/**
- * ScrollTrigger positions are computed when triggers are created, but the
- * hero's pinned trigger is created later (post-hydration) and ScrollTrigger
- * credits pin-spacer distance to downstream triggers in CREATION order —
- * so every section trigger ends up ~2 viewport-heights early (parallax
- * frozen at its end state, reveals firing early). One shared, ref-counted
- * watcher re-sorts triggers into document order and refreshes whenever the
- * body height settles at a new value (pin spacer insertion, image loads).
- */
-let watcherCount = 0;
-let bodyObserver: ResizeObserver | null = null;
-let refreshTimer: ReturnType<typeof setTimeout> | null = null;
-let lastBodyHeight = 0;
-
-function watchBodyHeightForRefresh(): () => void {
-  watcherCount++;
-  if (!bodyObserver) {
-    lastBodyHeight = document.body.scrollHeight;
-    bodyObserver = new ResizeObserver(() => {
-      const height = document.body.scrollHeight;
-      if (Math.abs(height - lastBodyHeight) < 2) return;
-      lastBodyHeight = height;
-      if (refreshTimer) clearTimeout(refreshTimer);
-      refreshTimer = setTimeout(() => {
-        ScrollTrigger.sort();
-        ScrollTrigger.refresh();
-      }, 150);
-    });
-    bodyObserver.observe(document.body);
-  }
-  return () => {
-    watcherCount--;
-    if (watcherCount === 0) {
-      bodyObserver?.disconnect();
-      bodyObserver = null;
-      if (refreshTimer) clearTimeout(refreshTimer);
-      refreshTimer = null;
-    }
-  };
-}
 
 export interface CollageCard {
   image?: { src: string; alt: string };

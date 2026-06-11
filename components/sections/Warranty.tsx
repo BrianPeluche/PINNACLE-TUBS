@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { siteConfig } from "@/data/site";
+import { useCrossfade } from "@/lib/useCrossfade";
 import { useReveal } from "@/lib/useReveal";
 import { SectionIntro } from "./SectionIntro";
 
@@ -9,6 +10,7 @@ import { SectionIntro } from "./SectionIntro";
 export function Warranty() {
   const sectionRef = useRef<HTMLElement>(null);
   useReveal(sectionRef);
+  useCrossfade(sectionRef);
   const copy = siteConfig.sections.warranty;
 
   return (

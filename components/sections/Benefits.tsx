@@ -1,19 +1,18 @@
 "use client";
 
 import { siteConfig } from "@/data/site";
-import { CollageSection } from "./CollageSection";
+import { ScrubSection } from "./ScrubSection";
 
-/** "Why buy a hot tub": health benefits, jet-water video in the collage. */
+/** "Why buy a hot tub": health benefits over scroll-scrubbed jet footage. */
 export function Benefits() {
   const copy = siteConfig.sections.benefits;
 
   return (
-    <CollageSection
+    <ScrubSection
       eyebrow={copy.eyebrow}
       title={copy.title}
       statement={copy.statement}
-      cards={copy.collage}
-      collageSide="right"
+      video={copy.video}
     >
       <ul className="space-y-3">
         {copy.items.map((item) => (
@@ -22,6 +21,6 @@ export function Benefits() {
           </li>
         ))}
       </ul>
-    </CollageSection>
+    </ScrubSection>
   );
 }

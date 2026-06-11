@@ -51,11 +51,10 @@ export const siteConfig = {
           body: "mountain winters are exactly what hot tubs are made for.",
         },
       ],
-      collage: [
-        { video: { src: "/assets/jacuzzi-water.mp4", poster: "/assets/jacuzzi-water-poster.jpg" } },
-        { image: { src: "/assets/dsc08664-web.jpg", alt: "Hot tub on display at the Pinnacle Tubs showroom" } },
-        { image: { src: "/assets/dsc08340-web.jpg", alt: "Spa showroom display" } },
-      ],
+      video: {
+        src: "/assets/jacuzzi-water-scrub.mp4",
+        poster: "/assets/jacuzzi-water-poster.jpg",
+      },
     },
     models: {
       eyebrow: "Current models",
@@ -84,16 +83,10 @@ export const siteConfig = {
       ],
       ozone:
         "Every spa ships with ozone purification: cleaner water with fewer chemicals, softer on skin, and less maintenance between soaks.",
-      collage: [
-        {
-          video: {
-            src: "/assets/underwater-bubbles.mp4",
-            poster: "/assets/underwater-bubbles-poster.jpg",
-          },
-        },
-        { image: { src: "/assets/dsc08376-web.jpg", alt: "Hot tub on display at the shop" } },
-        { image: { src: "/assets/3070473c-web.jpg", alt: "Installed spa with cover lifter on a stone patio" } },
-      ],
+      video: {
+        src: "/assets/underwater-bubbles-scrub.mp4",
+        poster: "/assets/underwater-bubbles-poster.jpg",
+      },
     },
     gallery: {
       eyebrow: "The shop",

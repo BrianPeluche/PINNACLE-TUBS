@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef } from "react";
+import { useCrossfade } from "@/lib/useCrossfade";
 import { useReveal } from "@/lib/useReveal";
 
 interface QuoteBandProps {
@@ -13,9 +14,10 @@ interface QuoteBandProps {
 export function QuoteBand({ text, image }: QuoteBandProps) {
   const sectionRef = useRef<HTMLElement>(null);
   useReveal(sectionRef);
+  useCrossfade(sectionRef);
 
   return (
-    <section ref={sectionRef} className="relative h-[55vh] min-h-[400px] overflow-hidden">
+    <section ref={sectionRef} className="relative h-[55vh] min-h-100 overflow-hidden">
       <Image src={image.src} alt={image.alt} fill sizes="100vw" className="object-cover" />
       <div className="absolute inset-0 bg-background/50" aria-hidden="true" />
       <div className="relative flex h-full items-center justify-center px-6">

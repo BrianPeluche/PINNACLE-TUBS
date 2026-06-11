@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
+import { useCrossfade } from "@/lib/useCrossfade";
 import { useReveal } from "@/lib/useReveal";
 import { Collage, type CollageCard } from "./Collage";
 import { SectionIntro } from "./SectionIntro";
@@ -32,6 +33,7 @@ export function CollageSection({
 }: CollageSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   useReveal(sectionRef);
+  useCrossfade(sectionRef);
 
   return (
     <section ref={sectionRef} className="overflow-x-clip bg-background py-24 sm:py-32">

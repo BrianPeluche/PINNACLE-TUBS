@@ -1,21 +1,20 @@
 "use client";
 
 import { siteConfig } from "@/data/site";
-import { CollageSection } from "./CollageSection";
+import { ScrubSection } from "./ScrubSection";
 
-/** "What's included" checklist + ozone note, underwater video in the collage. */
+/** "What's included" checklist over scroll-scrubbed underwater footage. */
 export function Included() {
   const copy = siteConfig.sections.included;
 
   return (
-    <CollageSection
+    <ScrubSection
       eyebrow={copy.eyebrow}
       title={copy.title}
       statement={copy.statement}
-      cards={copy.collage}
-      collageSide="right"
+      video={copy.video}
     >
-      <ul className="space-y-2">
+      <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
         {copy.items.map((item) => (
           <li key={item} className="flex items-start gap-3">
             <span aria-hidden="true" className="mt-1 text-xs text-accent">
@@ -26,6 +25,6 @@ export function Included() {
         ))}
       </ul>
       <p className="border-l-2 border-accent/50 pl-4 text-sm">{copy.ozone}</p>
-    </CollageSection>
+    </ScrubSection>
   );
 }
