@@ -52,6 +52,12 @@ export function useScrollScrub({
         },
       });
       build?.(tl);
+      // Dissolve tail: the pinned footage fades toward black over the last
+      // ~20% of the pin, ending at the same 0.25 floor the next section's
+      // crossfade rises from — so the release is a continuous dissolve
+      // through dark with both sides at matched partial opacity, not a hard
+      // cut between two full-brightness frames. Scrub-linked => reversible.
+      tl.to(section, { opacity: 0.25, ease: "none", duration: 0.2 }, 0.8);
     }, sectionRef);
 
     // currentTime needs the real duration; ctx.add registers for cleanup.
