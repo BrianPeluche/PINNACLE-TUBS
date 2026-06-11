@@ -87,7 +87,7 @@ export function ScrubSection({ eyebrow, title, statement, video, children }: Scr
       { opacity: 1, y: 0, ease: "none", duration: 0.15 },
       0,
     );
-    tl.to(contentRef.current, { opacity: 0.25, y: -18, ease: "none", duration: 0.12 }, 0.88);
+    tl.to(contentRef.current, { opacity: 0.35, y: -18, ease: "none", duration: 0.12 }, 0.88);
   }, []);
 
   // keyed on videoMounted, not `enabled`: the <video> mounts only after the
@@ -127,7 +127,12 @@ export function ScrubSection({ eyebrow, title, statement, video, children }: Scr
           />
         )}
       </div>
-      <div className="absolute inset-0 bg-background/65" aria-hidden="true" />
+      {/* Text-legibility gradient only — footage stays full color on the open
+          side, matching the hero's treatment (no full-frame dimming). */}
+      <div
+        className="absolute inset-0 bg-linear-to-r from-background/80 via-background/30 to-transparent"
+        aria-hidden="true"
+      />
       <div ref={contentRef} className="relative flex h-full items-center">
         <div className="mx-auto w-full max-w-7xl px-6">
           <div className="max-w-xl">

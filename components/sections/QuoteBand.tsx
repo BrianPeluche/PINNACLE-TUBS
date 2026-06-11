@@ -19,11 +19,11 @@ export function QuoteBand({ text, image }: QuoteBandProps) {
   return (
     <section ref={sectionRef} className="relative h-[55vh] min-h-100 overflow-hidden">
       <Image src={image.src} alt={image.alt} fill sizes="100vw" className="object-cover" />
-      <div className="absolute inset-0 bg-background/50" aria-hidden="true" />
+      <div className="absolute inset-0 bg-background/30" aria-hidden="true" />
       <div className="relative flex h-full items-center justify-center px-6">
         <p
           data-reveal
-          className="max-w-4xl text-center text-4xl font-extrabold uppercase leading-[0.95] tracking-tight sm:text-6xl"
+          className="max-w-4xl text-center text-4xl font-extrabold uppercase leading-[0.95] tracking-tight drop-shadow-[0_2px_18px_rgba(0,0,0,0.85)] sm:text-6xl"
         >
           {text}
         </p>

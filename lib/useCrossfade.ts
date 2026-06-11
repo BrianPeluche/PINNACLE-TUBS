@@ -20,23 +20,26 @@ export function useCrossfade(sectionRef: RefObject<HTMLElement | null>) {
     if (!el) return;
 
     const ctx = gsap.context(() => {
+      // Floors above 0 and a fade-in that completes deeper in the viewport:
+      // the rise must be visible while the section is on screen, and nothing
+      // should sit near-black while the user can still read it.
       gsap.fromTo(
         el,
-        { opacity: 0, y: 28, scale: 0.988 },
+        { opacity: 0.25, y: 32, scale: 0.988 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
           ease: "none",
-          scrollTrigger: { trigger: el, start: "top 92%", end: "top 45%", scrub: true },
+          scrollTrigger: { trigger: el, start: "top 90%", end: "top 50%", scrub: true },
         },
       );
       gsap.to(el, {
-        opacity: 0.18,
+        opacity: 0.3,
         scale: 0.988,
         y: -18,
         ease: "none",
-        scrollTrigger: { trigger: el, start: "bottom 50%", end: "bottom 8%", scrub: true },
+        scrollTrigger: { trigger: el, start: "bottom 40%", end: "bottom 5%", scrub: true },
       });
     }, sectionRef);
 
