@@ -1,14 +1,21 @@
 import { Hero } from "@/components/hero/Hero";
+import { Benefits } from "@/components/sections/Benefits";
+import { CalSpas } from "@/components/sections/CalSpas";
+import { FeaturedTubs } from "@/components/sections/FeaturedTubs";
+import { Gallery } from "@/components/sections/Gallery";
+import { Included } from "@/components/sections/Included";
+import { Warranty } from "@/components/sections/Warranty";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <div className="flex min-h-[60vh] items-center justify-center px-6 text-center">
-        <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">
-          Pinnacle Tubs — site under construction
-        </p>
-      </div>
+      <Benefits />
+      <FeaturedTubs />
+      <Included />
+      <Gallery />
+      <CalSpas />
+      <Warranty />
     </>
   );
 }

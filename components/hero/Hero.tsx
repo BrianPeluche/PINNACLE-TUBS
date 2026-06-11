@@ -1,27 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef } from "react";
 import { siteConfig } from "@/data/site";
+import { useHydrated } from "@/lib/useHydrated";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { BUILD_ID, HeroDebug } from "./HeroDebug";
 import { HeroMask } from "./HeroMask";
 import { useHeroScroll } from "./useHeroScroll";
 import { useVideoUnlock } from "./useVideoUnlock";
-
-const noopSubscribe = () => () => {};
-
-/**
- * False during SSR/hydration, true after. The server can't know the client's
- * motion preference, so the <video> must stay out of the server HTML — else
- * the browser starts downloading it even for reduced-motion users.
- */
-function useHydrated(): boolean {
-  return useSyncExternalStore(
-    noopSubscribe,
-    () => true,
-    () => false,
-  );
-}
 
 /**
  * GTA VI–style scroll hero: "PINNACLE TUBS" starts as a solid white title;
