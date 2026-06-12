@@ -13,6 +13,7 @@ export function Benefits() {
       title={copy.title}
       statement={copy.statement}
       video={copy.video}
+      overlay="light"
     >
       <ul className="space-y-3">
         {copy.items.map((item) => (

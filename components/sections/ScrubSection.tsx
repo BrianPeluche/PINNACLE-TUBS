@@ -16,6 +16,9 @@ interface ScrubSectionProps {
   title: string;
   statement?: string;
   video: { src: string; poster: string };
+  /** "light" keeps the footage brighter (thinner wash + gradient) for
+   * sections where the water should read clearly; default is "standard". */
+  overlay?: "standard" | "light";
   children: ReactNode;
 }
 
@@ -27,7 +30,14 @@ interface ScrubSectionProps {
  * only starts loading when the section approaches the viewport; reduced
  * motion gets the static poster, no pin, content fully visible.
  */
-export function ScrubSection({ eyebrow, title, statement, video, children }: ScrubSectionProps) {
+export function ScrubSection({
+  eyebrow,
+  title,
+  statement,
+  video,
+  overlay = "standard",
+  children,
+}: ScrubSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -130,11 +140,18 @@ export function ScrubSection({ eyebrow, title, statement, video, children }: Scr
         )}
       </div>
       {/* Text-legibility gradient (footage stays near-full color on the open
-          side) plus a light full-bleed brand wash that obscures the stock
-          footage watermark — kept under the hold-phase test's 0.45 ceiling. */}
-      <div className="absolute inset-0 bg-background/25" aria-hidden="true" />
+          side) plus a full-bleed brand wash that obscures the stock footage
+          watermark — kept under the hold-phase test's 0.45 ceiling. */}
       <div
-        className="absolute inset-0 bg-linear-to-r from-background/80 via-background/30 to-transparent"
+        className={`absolute inset-0 ${overlay === "light" ? "bg-background/10" : "bg-background/25"}`}
+        aria-hidden="true"
+      />
+      <div
+        className={`absolute inset-0 bg-linear-to-r ${
+          overlay === "light"
+            ? "from-background/60 via-background/15 to-transparent"
+            : "from-background/80 via-background/30 to-transparent"
+        }`}
         aria-hidden="true"
       />
       <div ref={contentRef} className="relative flex h-full items-center">

@@ -6,6 +6,7 @@ import { Gallery } from "@/components/sections/Gallery";
 import { Included } from "@/components/sections/Included";
 import { QuoteBand } from "@/components/sections/QuoteBand";
 import { Warranty } from "@/components/sections/Warranty";
+import { WhyHotTubEditorial } from "@/components/sections/WhyHotTubEditorial";
 import { siteConfig } from "@/data/site";
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
     <>
       <Hero />
       <Benefits />
+      <WhyHotTubEditorial />
       <QuoteBand text={snowQuote.text} image={snowQuote.image} />
       <CurrentModels />
       <Included />
