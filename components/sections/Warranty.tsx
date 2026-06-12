@@ -1,58 +1,39 @@
 "use client";
 
+import { useRef } from "react";
+import { StickySection } from "@/components/ui/StickySection";
 import { siteConfig } from "@/data/site";
-import { CollageSection } from "./CollageSection";
+import { useReveal } from "@/lib/useReveal";
+import { SectionIntro } from "./SectionIntro";
 
-const SERVICE_CARDS = [
-  {
-    video: {
-      src: "/assets/opening-tub.mp4",
-      poster: "/assets/opening-tub-poster.jpg",
-    },
-    label: "Delivered here",
-    description: "Local setup, placement, and walkthrough from the same shop that sells the spa.",
-  },
-  {
-    image: {
-      src: "/assets/15724F57-7274-4D86-9298-529EA2ADDE07.jpg",
-      alt: "Pinnacle Tubs technician servicing a hot tub overlooking Big Bear Lake",
-    },
-    label: "Serviced here",
-  },
-  {
-    image: {
-      src: "/assets/dsc08332-web.jpg",
-      alt: "Pinnacle Tubs storefront on Big Bear Blvd",
-    },
-    label: "Big Bear shop",
-  },
-] as const;
-
-/** Lucia-style editorial section: media-left, text-right, local service promise. */
+/** Pinned headline background; the promise copy rides up over it. */
 export function Warranty() {
+  const contentRef = useRef<HTMLDivElement>(null);
+  useReveal(contentRef);
   const copy = siteConfig.sections.warranty;
 
   return (
-    <CollageSection
-      eyebrow={copy.eyebrow}
-      title={copy.title}
-      statement={copy.statement}
-      cards={SERVICE_CARDS}
-      collageSide="left"
+    <StickySection
+      bgSlot={
+        <div className="flex h-full items-center bg-background">
+          <div className="mx-auto w-full max-w-4xl px-6">
+            <SectionIntro eyebrow={copy.eyebrow} title={copy.title} statement={copy.statement} />
+          </div>
+        </div>
+      }
     >
-      <p>{copy.body}</p>
-      <div className="grid gap-3 pt-4 text-sm sm:grid-cols-2">
-        {[
-          "Delivery and placement by local crews",
-          "Setup guidance before the first soak",
-          "Manufacturer warranty handled through our shop",
-          "Service and repairs without third-party call centers",
-        ].map((item) => (
-          <p key={item} className="border-l border-accent/50 pl-4 text-muted-foreground">
-            {item}
-          </p>
-        ))}
+      <div ref={contentRef} className="mx-auto flex min-h-svh max-w-4xl items-center px-6">
+        <p
+          data-reveal
+          className="p-8 text-lg leading-relaxed text-muted-foreground sm:p-12"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(10,10,12,0.92) 35%, rgba(10,10,12,0) 78%)",
+          }}
+        >
+          {copy.body}
+        </p>
       </div>
-    </CollageSection>
+    </StickySection>
   );
 }
