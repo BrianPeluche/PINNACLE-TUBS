@@ -5,6 +5,7 @@ import { CurrentModels } from "@/components/sections/CurrentModels";
 import { Gallery } from "@/components/sections/Gallery";
 import { Included } from "@/components/sections/Included";
 import { QuoteBand } from "@/components/sections/QuoteBand";
+import { RelaxationInterstitial } from "@/components/sections/RelaxationInterstitial";
 import { Warranty } from "@/components/sections/Warranty";
 import { WhyHotTubEditorial } from "@/components/sections/WhyHotTubEditorial";
 import { siteConfig } from "@/data/site";
@@ -14,6 +15,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <RelaxationInterstitial />
       <Benefits />
       <WhyHotTubEditorial />
       <QuoteBand text={snowQuote.text} image={snowQuote.image} />

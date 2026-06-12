@@ -21,7 +21,7 @@ const COPY = {
   eyebrow: "Why buy a Pinnacle tub",
   title: "Feel better, every day",
   statement:
-    "Warm water, big results: less stress, faster recovery, deeper sleep — all winter long in Big Bear.",
+    "Warm water, big results: less stress, faster recovery, deeper sleep — all season long.",
   body: "There's a reason every good day on the mountain ends in hot water. Pinnacle Tubs builds luxury hot tubs with American-made materials — and sells, delivers, and services them from our own shop on Big Bear Blvd.",
   points: [
     "After the slopes — jets work backs, shoulders, and legs",

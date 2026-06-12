@@ -19,8 +19,10 @@ interface ScrubSectionProps {
   statement?: string;
   video: { src: string; poster: string };
   /** "light" keeps the footage brighter (thinner wash + gradient) for
-   * sections where the water should read clearly; default is "standard". */
-  overlay?: "standard" | "light";
+   * sections where the water should read clearly; "none" drops the flat
+   * wash entirely for clean (watermark-free) footage while keeping the
+   * dark entrance veil; default is "standard". */
+  overlay?: "standard" | "light" | "none";
   children?: ReactNode;
 }
 
@@ -104,7 +106,7 @@ export function ScrubSection({
       );
       tl.to(contentRef.current, { opacity: 0.35, y: -18, ease: "none", duration: 0.12 }, 0.88);
     }
-    // Entrance veil (light overlay only): the section slides up under the
+    // Entrance veil (light/none overlays): the section slides up under the
     // previous pin BEFORE its own pin starts, so a thin wash would bleed
     // bright footage into that handoff. The veil keeps the entrance as dark
     // as the standard scrim and scrubs away over the first stretch of the
@@ -162,24 +164,27 @@ export function ScrubSection({
       </div>
       {/* Text-legibility gradient (footage stays near-full color on the open
           side) plus a full-bleed brand wash that obscures the stock footage
-          watermark — kept under the hold-phase test's 0.45 ceiling. */}
-      <div
-        className={`absolute inset-0 ${overlay === "light" ? "bg-background/10" : "bg-background/25"}`}
-        aria-hidden="true"
-      />
+          watermark — kept under the hold-phase test's 0.45 ceiling. Clean
+          footage (overlay="none") skips the wash entirely. */}
+      {overlay !== "none" && (
+        <div
+          className={`absolute inset-0 ${overlay === "light" ? "bg-background/10" : "bg-background/25"}`}
+          aria-hidden="true"
+        />
+      )}
       {hasContent && (
         // directional gradient exists for text legibility — a pure bridge
         // keeps the footage open edge-to-edge
         <div
           className={`absolute inset-0 bg-linear-to-r ${
-            overlay === "light"
-              ? "from-background/60 via-background/15 to-transparent"
-              : "from-background/80 via-background/30 to-transparent"
+            overlay === "standard"
+              ? "from-background/80 via-background/30 to-transparent"
+              : "from-background/60 via-background/15 to-transparent"
           }`}
           aria-hidden="true"
         />
       )}
-      {overlay === "light" && videoMounted && (
+      {overlay !== "standard" && videoMounted && (
         // mounts with the scrub (never for SSR/reduced motion, which keep
         // the static bright poster); inline opacity holds until the
         // timeline's first tick takes over
