@@ -3,25 +3,13 @@
 import { siteConfig } from "@/data/site";
 import { ScrubSection } from "./ScrubSection";
 
-/** "Why buy a hot tub": health benefits over scroll-scrubbed jet footage. */
+/**
+ * Cinematic bridge between the hero and the editorial section (the GTA
+ * FirstVideo pattern): scroll-scrubbed close-up jet footage with no text —
+ * the "why buy" copy lives in WhyHotTubEditorial, which follows it.
+ */
 export function Benefits() {
   const copy = siteConfig.sections.benefits;
 
-  return (
-    <ScrubSection
-      eyebrow={copy.eyebrow}
-      title={copy.title}
-      statement={copy.statement}
-      video={copy.video}
-      overlay="light"
-    >
-      <ul className="space-y-3">
-        {copy.items.map((item) => (
-          <li key={item.title}>
-            <strong className="font-semibold text-foreground">{item.title}</strong> — {item.body}
-          </li>
-        ))}
-      </ul>
-    </ScrubSection>
-  );
+  return <ScrubSection video={copy.video} overlay="light" />;
 }

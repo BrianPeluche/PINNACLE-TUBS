@@ -7,15 +7,17 @@ import { MediaModal } from "./MediaModal";
 interface ExpandableImageCardProps {
   src: string;
   alt: string;
-  /** Aspect class for the framed area. Landscape cards only — portrait
-   * images should not use this component. */
+  /** Aspect class for the framed area — landscape (default aspect-video)
+   * or portrait (e.g. aspect-[2/3]) both work; the lightbox letterboxes
+   * either orientation with object-contain. */
   aspectClassName?: string;
 }
 
 /**
- * GTA-style editorial photo card for LANDSCAPE images: pale-yellow border,
- * and on hover the photo inside scales slightly down so more of the border
- * shows. Click opens a full-screen lightbox (MediaModal).
+ * GTA-style editorial photo card: the pale-yellow frame is barely-there at
+ * rest and commits on hover/keyboard focus, while the photo scales slightly
+ * down so the frame shows around it. Click opens a full-screen lightbox
+ * (MediaModal).
  */
 export function ExpandableImageCard({
   src,
@@ -30,7 +32,7 @@ export function ExpandableImageCard({
         type="button"
         onClick={() => setOpen(true)}
         aria-label={`Expand photo: ${alt}`}
-        className="group relative block w-full cursor-zoom-in border-2 border-[#f3ecd0] bg-background p-1.5 sm:p-2"
+        className="group relative block w-full cursor-zoom-in border-2 border-[#f3ecd0]/15 bg-background p-1.5 outline-none transition-colors duration-300 hover:border-[#f3ecd0] focus-visible:border-[#f3ecd0] sm:p-2"
       >
         <span className={`relative block w-full overflow-hidden ${aspectClassName}`}>
           <Image
@@ -38,7 +40,7 @@ export function ExpandableImageCard({
             alt={alt}
             fill
             sizes="(min-width: 1024px) 50vw, 100vw"
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[0.96]"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[0.96] group-focus-visible:scale-[0.96]"
           />
         </span>
         <span

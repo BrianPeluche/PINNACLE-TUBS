@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useRef } from "react";
 import { ExpandableImageCard } from "@/components/ui/ExpandableImageCard";
 import { useReveal } from "@/lib/useReveal";
@@ -16,16 +15,20 @@ import { SectionIntro } from "./SectionIntro";
  * change (move into data/ when it unfreezes).
  */
 const COPY = {
-  eyebrow: "Why buy a hot tub",
+  // Business claims sourced from the old site (pinnacletubs.com): American
+  // materials, 10yr shell / 5yr equipment warranty, sales-service-repair,
+  // tubs in stock on Big Bear Blvd.
+  eyebrow: "Why buy a Pinnacle tub",
   title: "Feel better, every day",
   statement:
     "Warm water, big results: less stress, faster recovery, deeper sleep — all winter long in Big Bear.",
-  body: "There's a reason every good day on the mountain ends in hot water. Twenty minutes at 102° loosens what the slopes tightened, quiets what the day stirred up, and sets you up to sleep like the lake at midnight.",
+  body: "There's a reason every good day on the mountain ends in hot water. Pinnacle Tubs builds luxury hot tubs with American-made materials — and sells, delivers, and services them from our own shop on Big Bear Blvd.",
   points: [
     "After the slopes — jets work backs, shoulders, and legs",
-    "Before bed — the warm-up and cool-down cue deeper sleep",
-    "All season — snow on the deck, steam off the water",
+    "Made in the USA — 10-year shell warranty, 5 years on equipment",
+    "Local sales, service, and repair — one crew, all year round",
   ],
+  closing: "Tubs are in stock now — call, or come see them running.",
 } as const;
 
 const LANDSCAPE_PHOTOS = [
@@ -63,6 +66,9 @@ export function WhyHotTubEditorial() {
               </li>
             ))}
           </ul>
+          <p data-reveal className="mt-8 text-base font-semibold text-foreground">
+            {COPY.closing}
+          </p>
         </div>
 
         <div className="space-y-6 sm:space-y-8">
@@ -77,14 +83,11 @@ export function WhyHotTubEditorial() {
                 aspectClassName="aspect-[4/3]"
               />
             </div>
-            {/* portraits: static, no border, no lightbox */}
-            <div data-reveal data-reveal-delay="0.2" className="relative hidden overflow-hidden sm:block">
-              <Image
+            <div data-reveal data-reveal-delay="0.2">
+              <ExpandableImageCard
                 src={PORTRAIT_PHOTOS[0].src}
                 alt={PORTRAIT_PHOTOS[0].alt}
-                fill
-                sizes="(min-width: 1024px) 20vw, 40vw"
-                className="object-cover"
+                aspectClassName="aspect-[2/3]"
               />
             </div>
           </div>
@@ -94,13 +97,11 @@ export function WhyHotTubEditorial() {
           {/* close-up row mirrors row two (portrait leads) so the stack
               alternates instead of reading as a grid */}
           <div className="grid gap-6 sm:grid-cols-[2fr_3fr] sm:gap-8">
-            <div data-reveal className="relative hidden overflow-hidden sm:block">
-              <Image
+            <div data-reveal>
+              <ExpandableImageCard
                 src={PORTRAIT_PHOTOS[1].src}
                 alt={PORTRAIT_PHOTOS[1].alt}
-                fill
-                sizes="(min-width: 1024px) 20vw, 40vw"
-                className="object-cover"
+                aspectClassName="aspect-[2/3]"
               />
             </div>
             <div data-reveal data-reveal-delay="0.1">

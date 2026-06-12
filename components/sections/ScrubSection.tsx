@@ -12,23 +12,26 @@ const MEDIA_ASPECT = 16 / 9;
 const PIN_VIEWPORTS = 1.5;
 
 interface ScrubSectionProps {
-  eyebrow: string;
-  title: string;
+  /** Omit eyebrow/title/children for a pure cinematic bridge: footage only,
+   * no text column, no legibility gradient (the GTA FirstVideo pattern). */
+  eyebrow?: string;
+  title?: string;
   statement?: string;
   video: { src: string; poster: string };
   /** "light" keeps the footage brighter (thinner wash + gradient) for
    * sections where the water should read clearly; default is "standard". */
   overlay?: "standard" | "light";
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 /**
  * GTA "video bridge" section: full-bleed footage scrubbed by scroll while
- * the section pins for PIN_VIEWPORTS. Content fades up as the pin starts and
- * dims at the end — all segments of the same scrubbed timeline as the
- * footage, so everything reverses together. The video is preload="none" and
- * only starts loading when the section approaches the viewport; reduced
- * motion gets the static poster, no pin, content fully visible.
+ * the section pins for PIN_VIEWPORTS. Content (when present) fades up as the
+ * pin starts and dims at the end — all segments of the same scrubbed
+ * timeline as the footage, so everything reverses together. The video is
+ * preload="none" and only starts loading when the section approaches the
+ * viewport; reduced motion gets the static poster, no pin, content fully
+ * visible.
  */
 export function ScrubSection({
   eyebrow,
@@ -92,13 +95,15 @@ export function ScrubSection({
   }, [armed]);
 
   const build = useCallback((tl: ScrubTimeline) => {
-    tl.fromTo(
-      contentRef.current,
-      { opacity: 0, y: 36 },
-      { opacity: 1, y: 0, ease: "none", duration: 0.15 },
-      0,
-    );
-    tl.to(contentRef.current, { opacity: 0.35, y: -18, ease: "none", duration: 0.12 }, 0.88);
+    if (contentRef.current) {
+      tl.fromTo(
+        contentRef.current,
+        { opacity: 0, y: 36 },
+        { opacity: 1, y: 0, ease: "none", duration: 0.15 },
+        0,
+      );
+      tl.to(contentRef.current, { opacity: 0.35, y: -18, ease: "none", duration: 0.12 }, 0.88);
+    }
     // Entrance veil (light overlay only): the section slides up under the
     // previous pin BEFORE its own pin starts, so a thin wash would bleed
     // bright footage into that handoff. The veil keeps the entrance as dark
@@ -117,6 +122,8 @@ export function ScrubSection({
   // keyed on videoMounted, not `enabled`: the <video> mounts only after the
   // box is measured, and the pin/timeline must build after the element exists
   useScrollScrub({ sectionRef, videoRef, enabled: videoMounted, pinViewports: PIN_VIEWPORTS, build });
+
+  const hasContent = Boolean(title || eyebrow || children);
 
   const coverStyle: CSSProperties | undefined =
     box.width > 0
@@ -160,14 +167,18 @@ export function ScrubSection({
         className={`absolute inset-0 ${overlay === "light" ? "bg-background/10" : "bg-background/25"}`}
         aria-hidden="true"
       />
-      <div
-        className={`absolute inset-0 bg-linear-to-r ${
-          overlay === "light"
-            ? "from-background/60 via-background/15 to-transparent"
-            : "from-background/80 via-background/30 to-transparent"
-        }`}
-        aria-hidden="true"
-      />
+      {hasContent && (
+        // directional gradient exists for text legibility — a pure bridge
+        // keeps the footage open edge-to-edge
+        <div
+          className={`absolute inset-0 bg-linear-to-r ${
+            overlay === "light"
+              ? "from-background/60 via-background/15 to-transparent"
+              : "from-background/80 via-background/30 to-transparent"
+          }`}
+          aria-hidden="true"
+        />
+      )}
       {overlay === "light" && videoMounted && (
         // mounts with the scrub (never for SSR/reduced motion, which keep
         // the static bright poster); inline opacity holds until the
@@ -179,16 +190,18 @@ export function ScrubSection({
           aria-hidden="true"
         />
       )}
-      <div ref={contentRef} className="relative flex h-full items-center">
-        <div className="mx-auto w-full max-w-7xl px-6">
-          <div className="max-w-xl">
-            <SectionIntro eyebrow={eyebrow} title={title} statement={statement} />
-            <div className="mt-8 space-y-4 text-base leading-relaxed text-muted-foreground">
-              {children}
+      {hasContent && (
+        <div ref={contentRef} className="relative flex h-full items-center">
+          <div className="mx-auto w-full max-w-7xl px-6">
+            <div className="max-w-xl">
+              <SectionIntro eyebrow={eyebrow ?? ""} title={title ?? ""} statement={statement} />
+              <div className="mt-8 space-y-4 text-base leading-relaxed text-muted-foreground">
+                {children}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }
