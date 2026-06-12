@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useCrossfade } from "@/lib/useCrossfade";
 import { useHydrated } from "@/lib/useHydrated";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { useScrollScrub, type ScrubTimeline } from "@/lib/useScrollScrub";
@@ -16,6 +17,9 @@ interface ScrubSectionProps {
   title: string;
   statement?: string;
   video: { src: string; poster: string };
+  /** Pull this section up over the previous one's tail for the dissolve.
+   * Off for the section directly after the hero (must not overlap its pin). */
+  overlap?: boolean;
   children: ReactNode;
 }
 
@@ -27,7 +31,14 @@ interface ScrubSectionProps {
  * only starts loading when the section approaches the viewport; reduced
  * motion gets the static poster, no pin, content fully visible.
  */
-export function ScrubSection({ eyebrow, title, statement, video, children }: ScrubSectionProps) {
+export function ScrubSection({
+  eyebrow,
+  title,
+  statement,
+  video,
+  overlap = false,
+  children,
+}: ScrubSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -41,6 +52,8 @@ export function ScrubSection({ eyebrow, title, statement, video, children }: Scr
   // Unlock only once the video is allowed to load — a page-top gesture must
   // not trigger play() (and thus a download) on far-off preload="none" videos.
   useVideoUnlock(videoRef, armed);
+  // Enter-side dissolve only: the exit is the scrub timeline's own tail.
+  useCrossfade(sectionRef, { leave: false });
 
   // single geometry source: the section's own rendered box
   useEffect(() => {
@@ -112,7 +125,10 @@ export function ScrubSection({ eyebrow, title, statement, video, children }: Scr
       : undefined;
 
   return (
-    <section ref={sectionRef} className="relative h-svh overflow-hidden bg-background">
+    <section
+      ref={sectionRef}
+      className={`relative h-svh overflow-hidden bg-background ${overlap ? "mt-[-22svh]" : ""}`}
+    >
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         <Image src={video.poster} alt="" fill sizes="100vw" className="object-cover" />
         {videoMounted && coverStyle && (

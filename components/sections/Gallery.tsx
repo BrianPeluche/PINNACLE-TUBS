@@ -15,7 +15,10 @@ export function Gallery() {
   const copy = siteConfig.sections.gallery;
 
   return (
-    <section ref={sectionRef} className="bg-background py-24 sm:py-32">
+    <section
+      ref={sectionRef}
+      className="mt-[-22svh] bg-background pt-24 pb-[28svh] sm:pt-32"
+    >
       <div className="mx-auto max-w-7xl px-6">
         <div className="max-w-xl">
           <SectionIntro eyebrow={copy.eyebrow} title={copy.title} statement={copy.statement} />

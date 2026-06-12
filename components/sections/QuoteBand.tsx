@@ -17,7 +17,12 @@ export function QuoteBand({ text, image }: QuoteBandProps) {
   useCrossfade(sectionRef);
 
   return (
-    <section ref={sectionRef} className="relative h-[55vh] min-h-100 overflow-hidden">
+    <section
+      ref={sectionRef}
+      // taller than before: the next section's overlap consumes the bottom
+      // ~22svh of the image, so the visible band stays ~50svh
+      className="relative mt-[-22svh] h-[70svh] min-h-100 overflow-hidden"
+    >
       <Image src={image.src} alt={image.alt} fill sizes="100vw" className="object-cover" />
       <div className="absolute inset-0 bg-background/30" aria-hidden="true" />
       <div className="relative flex h-full items-center justify-center px-6">

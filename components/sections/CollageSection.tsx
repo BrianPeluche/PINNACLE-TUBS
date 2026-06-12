@@ -36,7 +36,12 @@ export function CollageSection({
   useCrossfade(sectionRef);
 
   return (
-    <section ref={sectionRef} className="overflow-x-clip bg-background py-24 sm:py-32">
+    <section
+      ref={sectionRef}
+      // -mt overlaps the previous section's tail for the dissolve; the large
+      // pb keeps this section's own content clear of the NEXT one's overlap.
+      className="mt-[-22svh] overflow-x-clip bg-background pt-24 pb-[28svh] sm:pt-32"
+    >
       <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-12">
         <div className={collageSide === "left" ? "lg:order-2 lg:col-span-4" : "lg:col-span-4"}>
           <SectionIntro eyebrow={eyebrow} title={title} statement={statement} />

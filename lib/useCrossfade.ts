@@ -4,14 +4,26 @@ import { useEffect, type RefObject } from "react";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
+interface CrossfadeOptions {
+  /** Disable the leave tween (pinned scrub sections fade out via their own
+   * timeline tail instead). */
+  leave?: boolean;
+}
+
 /**
- * GTA-style section handoff for non-pinned sections: the section fades/rises
- * up as it enters the viewport and dims back down as it leaves, scrub-linked
- * so it reverses cleanly. Opacity + tiny scale/y only — no layout properties,
- * no horizontal motion. Skipped under reduced motion (content stays fully
- * visible; gsap.fromTo never runs, so no-JS renders normally too).
+ * GTA-style overlapping dissolve. Sections after the hero are pulled up over
+ * the previous section's tail (negative top margin set by the section
+ * components), so during a handoff BOTH sections occupy the same screen
+ * space: the outgoing fades toward near-black while the incoming rises from
+ * near-black on top of it, passing through a shared dark midpoint. Both
+ * tweens are scrub-linked, so the dissolve reverses exactly. Opacity + tiny
+ * scale/y only; no horizontal motion. Skipped under reduced motion (content
+ * fully visible at all times — gsap never runs).
  */
-export function useCrossfade(sectionRef: RefObject<HTMLElement | null>) {
+export function useCrossfade(
+  sectionRef: RefObject<HTMLElement | null>,
+  { leave = true }: CrossfadeOptions = {},
+) {
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
@@ -20,29 +32,40 @@ export function useCrossfade(sectionRef: RefObject<HTMLElement | null>) {
     if (!el) return;
 
     const ctx = gsap.context(() => {
-      // Floors above 0 and a fade-in that completes deeper in the viewport:
-      // the rise must be visible while the section is on screen, and nothing
-      // should sit near-black while the user can still read it.
+      // The two windows cover the SAME physical scroll span: sections overlap
+      // by 22svh, so the incoming's "top 75%..35%" interval is the outgoing's
+      // "bottom ~96%..56%" interval. Linear tweens then cross at ~0.55/0.55 —
+      // both sections genuinely partial at the midpoint, like a film dissolve.
       gsap.fromTo(
         el,
-        { opacity: 0.25, y: 32, scale: 0.988 },
+        { opacity: 0.1, y: 24, scale: 0.99 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
           ease: "none",
-          scrollTrigger: { trigger: el, start: "top 90%", end: "top 50%", scrub: true },
+          scrollTrigger: { trigger: el, start: "top 75%", end: "top 35%", scrub: true },
         },
       );
-      gsap.to(el, {
-        opacity: 0.3,
-        scale: 0.988,
-        y: -18,
-        ease: "none",
-        scrollTrigger: { trigger: el, start: "bottom 40%", end: "bottom 5%", scrub: true },
-      });
+      if (leave) {
+        // fromTo with immediateRender:false — a plain .to() would capture its
+        // start value at creation time, when the enter tween has already set
+        // the section to 0.1, freezing the leave as a constant 0.1 -> 0.1.
+        gsap.fromTo(
+          el,
+          { opacity: 1, y: 0, scale: 1 },
+          {
+            opacity: 0.1,
+            scale: 0.99,
+            y: -16,
+            ease: "none",
+            immediateRender: false,
+            scrollTrigger: { trigger: el, start: "bottom 96%", end: "bottom 56%", scrub: true },
+          },
+        );
+      }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [reducedMotion, sectionRef]);
+  }, [reducedMotion, leave, sectionRef]);
 }
