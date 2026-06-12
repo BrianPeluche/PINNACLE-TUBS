@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { useCrossfade } from "@/lib/useCrossfade";
 import { useHydrated } from "@/lib/useHydrated";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { useScrollScrub, type ScrubTimeline } from "@/lib/useScrollScrub";
@@ -42,8 +41,6 @@ export function ScrubSection({ eyebrow, title, statement, video, children }: Scr
   // Unlock only once the video is allowed to load — a page-top gesture must
   // not trigger play() (and thus a download) on far-off preload="none" videos.
   useVideoUnlock(videoRef, armed);
-  // Enter-side dissolve only: the exit is the scrub timeline's own tail.
-  useCrossfade(sectionRef, { leave: false });
 
   // single geometry source: the section's own rendered box
   useEffect(() => {
@@ -132,8 +129,10 @@ export function ScrubSection({ eyebrow, title, statement, video, children }: Scr
           />
         )}
       </div>
-      {/* Text-legibility gradient only — footage stays full color on the open
-          side, matching the hero's treatment (no full-frame dimming). */}
+      {/* Text-legibility gradient (footage stays near-full color on the open
+          side) plus a light full-bleed brand wash that obscures the stock
+          footage watermark — kept under the hold-phase test's 0.45 ceiling. */}
+      <div className="absolute inset-0 bg-background/25" aria-hidden="true" />
       <div
         className="absolute inset-0 bg-linear-to-r from-background/80 via-background/30 to-transparent"
         aria-hidden="true"

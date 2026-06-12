@@ -14,7 +14,7 @@ export function Warranty() {
 
   return (
     <StickySection
-      background={
+      bgSlot={
         <div className="flex h-full items-center bg-background">
           <div className="mx-auto w-full max-w-4xl px-6">
             <SectionIntro eyebrow={copy.eyebrow} title={copy.title} statement={copy.statement} />

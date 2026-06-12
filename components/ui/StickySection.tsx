@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 interface StickySectionProps {
   /** Full-viewport layer pinned to the top while the wrapper scrolls. */
-  background: ReactNode;
+  bgSlot: ReactNode;
   /** Normal-flow content that rides upward over the pinned background. */
   children: ReactNode;
   className?: string;
@@ -16,10 +16,10 @@ interface StickySectionProps {
  * section's wrapper arrives, its sticky background bleeds in from below.
  * No whole-section opacity fades — the background stays anchored.
  */
-export function StickySection({ background, children, className }: StickySectionProps) {
+export function StickySection({ bgSlot, children, className }: StickySectionProps) {
   return (
     <section className={`relative min-h-[200svh] ${className ?? ""}`}>
-      <div className="sticky top-0 z-0 h-svh w-full overflow-hidden">{background}</div>
+      <div className="sticky top-0 z-0 h-svh w-full overflow-hidden">{bgSlot}</div>
       <div className="relative z-10">{children}</div>
     </section>
   );

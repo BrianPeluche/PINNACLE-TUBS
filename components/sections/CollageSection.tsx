@@ -37,7 +37,7 @@ export function CollageSection({
 
   return (
     <StickySection
-      background={
+      bgSlot={
         <div className="flex h-full items-center overflow-x-clip px-6">
           <div className="mx-auto w-full max-w-7xl">
             <div className={`lg:w-2/3 ${collageSide === "left" ? "" : "lg:ml-auto"}`}>

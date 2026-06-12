@@ -5,10 +5,20 @@ import { useRef } from "react";
 import { StickySection } from "@/components/ui/StickySection";
 import { siteConfig } from "@/data/site";
 import { useReveal } from "@/lib/useReveal";
+import { VideoBackground } from "@/lib/VideoBackground";
 import { SectionIntro } from "./SectionIntro";
 
-/** The section heading pins as the sticky background; the photo grid rides
- * up over it. */
+/**
+ * Previously-unused jet footage as the anchored background (data/ is frozen
+ * for this change, so the assignment lives here). The clip carries a stock
+ * watermark; the pinned heading + brand wash form the full-bleed overlay
+ * that obscures it. The photo grid rides up over the anchored footage.
+ */
+const GALLERY_VIDEO = {
+  src: "/assets/shooting-water.mp4",
+  poster: "/assets/shooting-water-poster.jpg",
+};
+
 export function Gallery() {
   const contentRef = useRef<HTMLDivElement>(null);
   useReveal(contentRef);
@@ -16,14 +26,18 @@ export function Gallery() {
 
   return (
     <StickySection
-      background={
-        <div className="flex h-full items-center bg-background">
-          <div className="mx-auto w-full max-w-7xl px-6">
-            <div className="max-w-xl">
-              <SectionIntro eyebrow={copy.eyebrow} title={copy.title} statement={copy.statement} />
+      bgSlot={
+        <>
+          <VideoBackground src={GALLERY_VIDEO.src} poster={GALLERY_VIDEO.poster} />
+          <div className="absolute inset-0 bg-background/45" aria-hidden="true" />
+          <div className="relative flex h-full items-center">
+            <div className="mx-auto w-full max-w-7xl px-6">
+              <div className="max-w-xl">
+                <SectionIntro eyebrow={copy.eyebrow} title={copy.title} statement={copy.statement} />
+              </div>
             </div>
           </div>
-        </div>
+        </>
       }
     >
       <div ref={contentRef} className="mx-auto max-w-7xl px-6 pb-24">
