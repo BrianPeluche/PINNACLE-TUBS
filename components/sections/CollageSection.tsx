@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { useCrossfade } from "@/lib/useCrossfade";
+import { StickySection } from "@/components/ui/StickySection";
 import { useReveal } from "@/lib/useReveal";
 import { Collage, type CollageCard } from "./Collage";
 import { SectionIntro } from "./SectionIntro";
@@ -11,17 +11,18 @@ interface CollageSectionProps {
   title: string;
   statement?: string;
   cards: readonly CollageCard[];
-  /** Which side the collage sits on. Alternate per section. */
+  /** Which side the collage leans toward; the text column rides opposite. */
   collageSide?: "left" | "right";
   /** Body copy / lists / CTAs, rendered in the text column. */
   children: ReactNode;
 }
 
 /**
- * GTA character-page section layout: narrow text column (~1/3) with
- * eyebrow + display headline + statement + body, opposite an overlapping
- * media collage. On mobile the text stacks first, collage clusters below.
- * overflow-x-clip contains the collage's edge bleed.
+ * GTA character-section layout on the sticky architecture: the collage is
+ * the pinned background art; the text column scrolls up over it with a
+ * radial dark backdrop for legibility (the reference sites' .jason-content
+ * treatment). Collage parallax is off here — the foreground's motion over
+ * the pinned art provides the depth.
  */
 export function CollageSection({
   eyebrow,
@@ -31,28 +32,35 @@ export function CollageSection({
   collageSide = "right",
   children,
 }: CollageSectionProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  useReveal(sectionRef);
-  useCrossfade(sectionRef);
+  const contentRef = useRef<HTMLDivElement>(null);
+  useReveal(contentRef);
 
   return (
-    <section
-      ref={sectionRef}
-      // -mt overlaps the previous section's tail for the dissolve; the large
-      // pb keeps this section's own content clear of the NEXT one's overlap.
-      className="relative mt-[-45svh] overflow-x-clip pt-24 pb-[50svh] sm:pt-32"
+    <StickySection
+      background={
+        <div className="flex h-full items-center overflow-x-clip px-6">
+          <div className="mx-auto w-full max-w-7xl">
+            <div className={`lg:w-2/3 ${collageSide === "left" ? "" : "lg:ml-auto"}`}>
+              <Collage cards={cards} side={collageSide} parallax={false} />
+            </div>
+          </div>
+        </div>
+      }
     >
-      <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-12">
-        <div className={collageSide === "left" ? "lg:order-2 lg:col-span-4" : "lg:col-span-4"}>
+      <div ref={contentRef} className="mx-auto flex min-h-svh w-full max-w-7xl items-center px-6">
+        <div
+          className={`max-w-xl p-8 sm:p-12 ${collageSide === "left" ? "lg:ml-auto" : ""}`}
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(10,10,12,0.92) 35%, rgba(10,10,12,0) 78%)",
+          }}
+        >
           <SectionIntro eyebrow={eyebrow} title={title} statement={statement} />
           <div data-reveal className="mt-8 space-y-4 text-base leading-relaxed text-muted-foreground">
             {children}
           </div>
         </div>
-        <div className={collageSide === "left" ? "lg:order-1 lg:col-span-8" : "lg:col-span-8"}>
-          <Collage cards={cards} side={collageSide} />
-        </div>
       </div>
-    </section>
+    </StickySection>
   );
 }

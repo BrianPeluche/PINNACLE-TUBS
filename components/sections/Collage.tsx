@@ -16,6 +16,9 @@ interface CollageProps {
   cards: readonly CollageCard[];
   /** Which side of the section the collage sits on — mirrors the layout. */
   side: "left" | "right";
+  /** Scroll-drift on the cards. Disable inside sticky backgrounds, where
+   * trigger geometry is unreliable and the foreground provides the motion. */
+  parallax?: boolean;
 }
 
 /** Card slots: big landscape bleeding past the outer edge, a portrait crop
@@ -41,12 +44,12 @@ const SLOTS: Array<{
  * slightly different rates as the section scrolls (scrub-linked, so the
  * parallax reverses; skipped entirely under reduced motion).
  */
-export function Collage({ cards, side }: CollageProps) {
+export function Collage({ cards, side, parallax = true }: CollageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion || !parallax) return;
     const container = containerRef.current;
     if (!container) return;
     const unwatch = watchBodyHeightForRefresh();
@@ -74,7 +77,7 @@ export function Collage({ cards, side }: CollageProps) {
       unwatch();
       ctx.revert();
     };
-  }, [reducedMotion, cards.length]);
+  }, [reducedMotion, parallax, cards.length]);
 
   return (
     <div ref={containerRef} className="relative h-95 sm:h-120 lg:h-150">

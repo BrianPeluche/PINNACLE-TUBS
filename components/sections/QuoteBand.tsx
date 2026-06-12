@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { useCrossfade } from "@/lib/useCrossfade";
+import { StickySection } from "@/components/ui/StickySection";
 import { useReveal } from "@/lib/useReveal";
 
 interface QuoteBandProps {
@@ -10,22 +10,22 @@ interface QuoteBandProps {
   image: { src: string; alt: string };
 }
 
-/** Full-bleed image band with a large overlaid quote line. */
+/** Full-bleed image pinned as a sticky background; the quote line rides up
+ * over it in normal flow. */
 export function QuoteBand({ text, image }: QuoteBandProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  useReveal(sectionRef);
-  useCrossfade(sectionRef);
+  const contentRef = useRef<HTMLDivElement>(null);
+  useReveal(contentRef);
 
   return (
-    <section
-      ref={sectionRef}
-      // taller than before: the next section's overlap consumes the bottom
-      // ~22svh of the image, so the visible band stays ~50svh
-      className="relative mt-[-45svh] h-[90svh] min-h-100 overflow-hidden"
+    <StickySection
+      background={
+        <>
+          <Image src={image.src} alt={image.alt} fill sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-background/30" aria-hidden="true" />
+        </>
+      }
     >
-      <Image src={image.src} alt={image.alt} fill sizes="100vw" className="object-cover" />
-      <div className="absolute inset-0 bg-background/30" aria-hidden="true" />
-      <div className="relative flex h-full items-center justify-center px-6">
+      <div ref={contentRef} className="flex min-h-svh items-center justify-center px-6">
         <p
           data-reveal
           className="max-w-4xl text-center text-4xl font-extrabold uppercase leading-[0.95] tracking-tight drop-shadow-[0_2px_18px_rgba(0,0,0,0.85)] sm:text-6xl"
@@ -33,6 +33,6 @@ export function QuoteBand({ text, image }: QuoteBandProps) {
           {text}
         </p>
       </div>
-    </section>
+    </StickySection>
   );
 }
