@@ -41,6 +41,7 @@ export function ScrubSection({
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const entranceVeilRef = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ width: 0, height: 0 });
   // true once the section approaches the viewport and the video may load
   const [armed, setArmed] = useState(false);
@@ -98,6 +99,19 @@ export function ScrubSection({
       0,
     );
     tl.to(contentRef.current, { opacity: 0.35, y: -18, ease: "none", duration: 0.12 }, 0.88);
+    // Entrance veil (light overlay only): the section slides up under the
+    // previous pin BEFORE its own pin starts, so a thin wash would bleed
+    // bright footage into that handoff. The veil keeps the entrance as dark
+    // as the standard scrim and scrubs away over the first stretch of the
+    // pin — gone well before the p=0.25 hold, re-darkening on scroll-up.
+    if (entranceVeilRef.current) {
+      tl.fromTo(
+        entranceVeilRef.current,
+        { opacity: 0.65 },
+        { opacity: 0, ease: "none", duration: 0.18, immediateRender: false },
+        0,
+      );
+    }
   }, []);
 
   // keyed on videoMounted, not `enabled`: the <video> mounts only after the
@@ -154,6 +168,17 @@ export function ScrubSection({
         }`}
         aria-hidden="true"
       />
+      {overlay === "light" && videoMounted && (
+        // mounts with the scrub (never for SSR/reduced motion, which keep
+        // the static bright poster); inline opacity holds until the
+        // timeline's first tick takes over
+        <div
+          ref={entranceVeilRef}
+          className="absolute inset-0 bg-background"
+          style={{ opacity: 0.65 }}
+          aria-hidden="true"
+        />
+      )}
       <div ref={contentRef} className="relative flex h-full items-center">
         <div className="mx-auto w-full max-w-7xl px-6">
           <div className="max-w-xl">

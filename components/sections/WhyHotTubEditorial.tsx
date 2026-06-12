@@ -31,13 +31,15 @@ const COPY = {
 const LANDSCAPE_PHOTOS = [
   { src: "/assets/b97a85c5-web.jpg", alt: "Hot tub on a covered deck under a pink dusk sky" },
   { src: "/assets/1d0564e1-web.jpg", alt: "New spa installed on a backyard patio in the pines" },
+  { src: "/assets/img3826-web.jpg", alt: "Close-up of jets churning warm water at dusk" },
+  { src: "/assets/img1978-web.jpg", alt: "Overhead close-up of a running spa on a cabin deck" },
   { src: "/assets/3070473c-web.jpg", alt: "Installed spa with cover lifter on a stone patio" },
 ] as const;
 
-const PORTRAIT_PHOTO = {
-  src: "/assets/dsc01673-web.jpg",
-  alt: "Freshly delivered hot tub on a Big Bear deck",
-} as const;
+const PORTRAIT_PHOTOS = [
+  { src: "/assets/dsc01673-web.jpg", alt: "Freshly delivered hot tub on a Big Bear deck" },
+  { src: "/assets/dsc08488-web.jpg", alt: "Close-up of water-care treatment poured tub-side" },
+] as const;
 
 export function WhyHotTubEditorial() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -75,11 +77,11 @@ export function WhyHotTubEditorial() {
                 aspectClassName="aspect-[4/3]"
               />
             </div>
-            {/* portrait: static, no border, no lightbox */}
+            {/* portraits: static, no border, no lightbox */}
             <div data-reveal data-reveal-delay="0.2" className="relative hidden overflow-hidden sm:block">
               <Image
-                src={PORTRAIT_PHOTO.src}
-                alt={PORTRAIT_PHOTO.alt}
+                src={PORTRAIT_PHOTOS[0].src}
+                alt={PORTRAIT_PHOTOS[0].alt}
                 fill
                 sizes="(min-width: 1024px) 20vw, 40vw"
                 className="object-cover"
@@ -88,6 +90,29 @@ export function WhyHotTubEditorial() {
           </div>
           <div data-reveal>
             <ExpandableImageCard src={LANDSCAPE_PHOTOS[2].src} alt={LANDSCAPE_PHOTOS[2].alt} />
+          </div>
+          {/* close-up row mirrors row two (portrait leads) so the stack
+              alternates instead of reading as a grid */}
+          <div className="grid gap-6 sm:grid-cols-[2fr_3fr] sm:gap-8">
+            <div data-reveal className="relative hidden overflow-hidden sm:block">
+              <Image
+                src={PORTRAIT_PHOTOS[1].src}
+                alt={PORTRAIT_PHOTOS[1].alt}
+                fill
+                sizes="(min-width: 1024px) 20vw, 40vw"
+                className="object-cover"
+              />
+            </div>
+            <div data-reveal data-reveal-delay="0.1">
+              <ExpandableImageCard
+                src={LANDSCAPE_PHOTOS[3].src}
+                alt={LANDSCAPE_PHOTOS[3].alt}
+                aspectClassName="aspect-[4/3]"
+              />
+            </div>
+          </div>
+          <div data-reveal>
+            <ExpandableImageCard src={LANDSCAPE_PHOTOS[4].src} alt={LANDSCAPE_PHOTOS[4].alt} />
           </div>
         </div>
       </div>
