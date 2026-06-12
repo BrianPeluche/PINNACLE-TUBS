@@ -17,7 +17,7 @@ export function Gallery() {
   return (
     <section
       ref={sectionRef}
-      className="mt-[-22svh] bg-background pt-24 pb-[28svh] sm:pt-32"
+      className="relative mt-[-45svh] pt-24 pb-[50svh] sm:pt-32"
     >
       <div className="mx-auto max-w-7xl px-6">
         <div className="max-w-xl">

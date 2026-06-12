@@ -21,7 +21,7 @@ export function QuoteBand({ text, image }: QuoteBandProps) {
       ref={sectionRef}
       // taller than before: the next section's overlap consumes the bottom
       // ~22svh of the image, so the visible band stays ~50svh
-      className="relative mt-[-22svh] h-[70svh] min-h-100 overflow-hidden"
+      className="relative mt-[-45svh] h-[90svh] min-h-100 overflow-hidden"
     >
       <Image src={image.src} alt={image.alt} fill sizes="100vw" className="object-cover" />
       <div className="absolute inset-0 bg-background/30" aria-hidden="true" />

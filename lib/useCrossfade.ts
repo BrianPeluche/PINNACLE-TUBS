@@ -32,10 +32,13 @@ export function useCrossfade(
     if (!el) return;
 
     const ctx = gsap.context(() => {
-      // The two windows cover the SAME physical scroll span: sections overlap
-      // by 22svh, so the incoming's "top 75%..35%" interval is the outgoing's
-      // "bottom ~96%..56%" interval. Linear tweens then cross at ~0.55/0.55 —
-      // both sections genuinely partial at the midpoint, like a film dissolve.
+      // The two windows cover the SAME physical scroll span: flow sections
+      // overlap by 45svh (real DOM overlap via negative margins, GTA-style),
+      // so the incoming's "top 80%..35%" interval IS the outgoing's
+      // "bottom 125%..80%" interval (bottom = top + 45svh) — equivalent to
+      // anchoring the outgoing fade on the incoming section, as the GTA
+      // reference implementations do. Linear tweens cross at ~0.55/0.55:
+      // both sections genuinely co-visible at partial opacity mid-dissolve.
       gsap.fromTo(
         el,
         { opacity: 0.1, y: 24, scale: 0.99 },
@@ -44,7 +47,7 @@ export function useCrossfade(
           y: 0,
           scale: 1,
           ease: "none",
-          scrollTrigger: { trigger: el, start: "top 75%", end: "top 35%", scrub: true },
+          scrollTrigger: { trigger: el, start: "top 80%", end: "top 35%", scrub: true },
         },
       );
       if (leave) {
@@ -60,7 +63,7 @@ export function useCrossfade(
             y: -16,
             ease: "none",
             immediateRender: false,
-            scrollTrigger: { trigger: el, start: "bottom 96%", end: "bottom 56%", scrub: true },
+            scrollTrigger: { trigger: el, start: "bottom 125%", end: "bottom 80%", scrub: true },
           },
         );
       }

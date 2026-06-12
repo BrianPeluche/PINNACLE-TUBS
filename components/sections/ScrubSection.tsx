@@ -17,9 +17,6 @@ interface ScrubSectionProps {
   title: string;
   statement?: string;
   video: { src: string; poster: string };
-  /** Pull this section up over the previous one's tail for the dissolve.
-   * Off for the section directly after the hero (must not overlap its pin). */
-  overlap?: boolean;
   children: ReactNode;
 }
 
@@ -31,14 +28,7 @@ interface ScrubSectionProps {
  * only starts loading when the section approaches the viewport; reduced
  * motion gets the static poster, no pin, content fully visible.
  */
-export function ScrubSection({
-  eyebrow,
-  title,
-  statement,
-  video,
-  overlap = false,
-  children,
-}: ScrubSectionProps) {
+export function ScrubSection({ eyebrow, title, statement, video, children }: ScrubSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -125,10 +115,9 @@ export function ScrubSection({
       : undefined;
 
   return (
-    <section
-      ref={sectionRef}
-      className={`relative h-svh overflow-hidden bg-background ${overlap ? "mt-[-22svh]" : ""}`}
-    >
+    // Pinned sections stay in normal flow — they cannot be negative-margin
+    // stacked; following flow sections overlap INTO their pin tail instead.
+    <section ref={sectionRef} className="relative h-svh overflow-hidden bg-background">
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         <Image src={video.poster} alt="" fill sizes="100vw" className="object-cover" />
         {videoMounted && coverStyle && (

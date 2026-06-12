@@ -14,7 +14,7 @@ export function Warranty() {
   const copy = siteConfig.sections.warranty;
 
   return (
-    <section ref={sectionRef} className="mt-[-22svh] bg-background pt-24 pb-24 sm:pt-32 sm:pb-32">
+    <section ref={sectionRef} className="relative mt-[-45svh] pt-24 pb-24 sm:pt-32 sm:pb-32">
       <div className="mx-auto max-w-4xl px-6">
         <SectionIntro eyebrow={copy.eyebrow} title={copy.title} statement={copy.statement} />
         <p data-reveal className="mt-8 text-lg leading-relaxed text-muted-foreground">
