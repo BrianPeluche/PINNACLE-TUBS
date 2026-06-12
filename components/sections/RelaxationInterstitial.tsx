@@ -48,10 +48,13 @@ export function RelaxationInterstitial() {
       // reversals retrace the exact same frames (the hero/bridge invariant).
       // autoAlpha keeps the fixed layer visibility:hidden whenever it is
       // fully transparent, so it can never sit over later sections.
+      // Darken a touch earlier off the hero: the cover reaches full black
+      // over the first 10% of the traversal so the bright hero is gone before
+      // the line arrives, without lengthening the dark hold itself.
       tl.fromTo(
         overlay,
         { autoAlpha: 0 },
-        { autoAlpha: 1, ease: "none", duration: 0.16 },
+        { autoAlpha: 1, ease: "none", duration: 0.1 },
         0,
       );
       tl.fromTo(

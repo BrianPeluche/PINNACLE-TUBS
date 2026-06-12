@@ -130,14 +130,17 @@ export function ScrubSection({
     // light-on-dark seam against the next (dark) section. Mirroring the
     // entrance, the exit veil darkens to solid over the pin tail so the
     // departing content is black — matching the section that follows, so the
-    // boundary is dark-on-dark and invisible. Aligned with the dissolve tail
-    // (pin 0.8→1.0) and scrub-linked, so it re-clears on scroll-up.
+    // boundary is dark-on-dark and invisible. Starts at 0.77 (just after the
+    // p=0.75 hold) so the water has already faded most of the way out by the
+    // time the next section overlaps up into the tail — a GTA-style crossfade
+    // rather than a hard cut to black. Scrub-linked, so it re-clears on
+    // scroll-up.
     if (exitVeilRef.current) {
       tl.fromTo(
         exitVeilRef.current,
         { opacity: 0 },
-        { opacity: 1, ease: "none", duration: 0.18, immediateRender: false },
-        0.82,
+        { opacity: 1, ease: "none", duration: 0.26, immediateRender: false },
+        0.74,
       );
     }
   }, [entranceVeilOpacity]);
