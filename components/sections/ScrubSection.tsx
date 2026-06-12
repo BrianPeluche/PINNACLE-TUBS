@@ -139,8 +139,8 @@ export function ScrubSection({
       tl.fromTo(
         exitVeilRef.current,
         { opacity: 0 },
-        { opacity: 1, ease: "none", duration: 0.26, immediateRender: false },
-        0.74,
+        { opacity: 1, ease: "none", duration: 0.32, immediateRender: false },
+        0.68,
       );
     }
   }, [entranceVeilOpacity]);

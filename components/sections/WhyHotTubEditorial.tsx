@@ -56,7 +56,7 @@ export function WhyHotTubEditorial() {
     // paint over the pinned bridge (z-auto); it stays under the z-50 nav.
     <section
       ref={sectionRef}
-      className="relative z-10 mt-[-10vh] bg-background py-24 sm:py-32"
+      className="relative z-10 mt-[-15vh] bg-background py-24 sm:py-32"
     >
       <div className="mx-auto grid max-w-7xl items-start gap-12 px-6 lg:grid-cols-[5fr_7fr] lg:gap-16">
         <div className="lg:sticky lg:top-28">

@@ -38,8 +38,13 @@ export function RelaxationInterstitial() {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
+          // start "top 120%" pulls the whole traversal ~0.2vh earlier so the
+          // cover begins darkening while the hero video is still visibly
+          // moving (the hero fades into dark rather than finishing first).
+          // The text/overlay-out positions below are re-anchored so the line
+          // animation still lands at the same scroll point as before.
           trigger: section,
-          start: "top bottom",
+          start: "top 120%",
           end: "bottom top",
           scrub: 1,
         },
@@ -48,30 +53,29 @@ export function RelaxationInterstitial() {
       // reversals retrace the exact same frames (the hero/bridge invariant).
       // autoAlpha keeps the fixed layer visibility:hidden whenever it is
       // fully transparent, so it can never sit over later sections.
-      // Darken a touch earlier off the hero: the cover reaches full black
-      // over the first 10% of the traversal so the bright hero is gone before
-      // the line arrives, without lengthening the dark hold itself.
+      // Gradual fade-in over the first ~14% so the hero dissolves into dark
+      // (rather than snapping) across its final motion.
       tl.fromTo(
         overlay,
         { autoAlpha: 0 },
-        { autoAlpha: 1, ease: "none", duration: 0.1 },
+        { autoAlpha: 1, ease: "none", duration: 0.14 },
         0,
       );
       tl.fromTo(
         text,
         { opacity: 0, y: 30, scale: 0.98, filter: "blur(14px)" },
-        { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", ease: "none", duration: 0.2 },
-        0.26,
+        { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", ease: "none", duration: 0.18 },
+        0.33,
       );
       tl.to(
         text,
-        { opacity: 0, y: -30, scale: 1.02, filter: "blur(14px)", ease: "none", duration: 0.2 },
-        0.56,
+        { opacity: 0, y: -30, scale: 1.02, filter: "blur(14px)", ease: "none", duration: 0.18 },
+        0.6,
       );
       // The bridge's top edge crosses the viewport during this fade, but it
       // enters behind its own opacity-1 entrance veil — black over black, so
       // no strip of footage and no boundary line is ever visible.
-      tl.to(overlay, { autoAlpha: 0, ease: "none", duration: 0.18 }, 0.82);
+      tl.to(overlay, { autoAlpha: 0, ease: "none", duration: 0.16 }, 0.84);
     }, sectionRef);
 
     return () => {
