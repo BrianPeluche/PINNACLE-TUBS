@@ -58,6 +58,8 @@ export function ScrubSection({
   // not trigger play() (and thus a download) on far-off preload="none" videos.
   useVideoUnlock(videoRef, armed);
 
+  const entranceVeilOpacity = overlay === "none" ? 1 : 0.65;
+
   // single geometry source: the section's own rendered box
   useEffect(() => {
     const el = sectionRef.current;
@@ -111,15 +113,18 @@ export function ScrubSection({
     // bright footage into that handoff. The veil keeps the entrance as dark
     // as the standard scrim and scrubs away over the first stretch of the
     // pin — gone well before the p=0.25 hold, re-darkening on scroll-up.
+    // "none" follows the interstitial's full-black layer: its veil starts
+    // fully opaque so the section's rising edge is black-on-black (no
+    // visible strip of footage, no seam line) until the pin reveals it.
     if (entranceVeilRef.current) {
       tl.fromTo(
         entranceVeilRef.current,
-        { opacity: 0.65 },
+        { opacity: entranceVeilOpacity },
         { opacity: 0, ease: "none", duration: 0.18, immediateRender: false },
         0,
       );
     }
-  }, []);
+  }, [entranceVeilOpacity]);
 
   // keyed on videoMounted, not `enabled`: the <video> mounts only after the
   // box is measured, and the pin/timeline must build after the element exists
@@ -191,7 +196,7 @@ export function ScrubSection({
         <div
           ref={entranceVeilRef}
           className="absolute inset-0 bg-background"
-          style={{ opacity: 0.65 }}
+          style={{ opacity: entranceVeilOpacity }}
           aria-hidden="true"
         />
       )}
