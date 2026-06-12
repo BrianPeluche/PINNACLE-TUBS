@@ -47,6 +47,7 @@ export function ScrubSection({
   const videoRef = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const entranceVeilRef = useRef<HTMLDivElement>(null);
+  const exitVeilRef = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ width: 0, height: 0 });
   // true once the section approaches the viewport and the video may load
   const [armed, setArmed] = useState(false);
@@ -124,6 +125,21 @@ export function ScrubSection({
         0,
       );
     }
+    // Exit veil (light/none overlays): a full-height pinned section's bottom
+    // edge sweeps up through the viewport as it unpins, exposing a moving
+    // light-on-dark seam against the next (dark) section. Mirroring the
+    // entrance, the exit veil darkens to solid over the pin tail so the
+    // departing content is black — matching the section that follows, so the
+    // boundary is dark-on-dark and invisible. Aligned with the dissolve tail
+    // (pin 0.8→1.0) and scrub-linked, so it re-clears on scroll-up.
+    if (exitVeilRef.current) {
+      tl.fromTo(
+        exitVeilRef.current,
+        { opacity: 0 },
+        { opacity: 1, ease: "none", duration: 0.18, immediateRender: false },
+        0.82,
+      );
+    }
   }, [entranceVeilOpacity]);
 
   // keyed on videoMounted, not `enabled`: the <video> mounts only after the
@@ -197,6 +213,16 @@ export function ScrubSection({
           ref={entranceVeilRef}
           className="absolute inset-0 bg-background"
           style={{ opacity: entranceVeilOpacity }}
+          aria-hidden="true"
+        />
+      )}
+      {overlay !== "standard" && videoMounted && (
+        // exit veil: darkens over the pin tail so the section departs black,
+        // hiding the bottom-edge seam against the next section (see build())
+        <div
+          ref={exitVeilRef}
+          className="absolute inset-0 bg-background"
+          style={{ opacity: 0 }}
           aria-hidden="true"
         />
       )}
