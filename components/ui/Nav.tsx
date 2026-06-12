@@ -9,7 +9,7 @@ export function Nav() {
           the viewport's left edge, links on the right. Transparent PNG needs
           no clipping or blend tricks. */}
       <nav className="flex w-full items-center justify-between px-6 py-3">
-        <Link href="/" className="ml-4 flex items-center" aria-label={siteConfig.name}>
+        <Link href="/" className="ml-8 flex items-center" aria-label={siteConfig.name}>
           <Image
             src="/assets/PINNACLE-TUBS-BETTER-LOGO.png"
             alt={`${siteConfig.name} — Luxury Hot Tubs, Made in the USA`}
@@ -19,7 +19,9 @@ export function Nav() {
             priority
           />
         </Link>
-        <ul className="flex items-center gap-6 text-sm text-muted-foreground">
+        {/* mirrored inset so the links sit as far from the right edge as the
+            logo does from the left */}
+        <ul className="mr-8 flex items-center gap-6 text-sm text-muted-foreground">
           {siteConfig.nav.map((item) => (
             <li key={item.href}>
               <Link href={item.href} className="transition-colors hover:text-accent">
