@@ -37,6 +37,8 @@ export function CollageSection({
 
   return (
     <StickySection
+      className="min-h-0 lg:min-h-[200svh]"
+      bgClassName="hidden lg:block"
       bgSlot={
         <div className="flex h-full items-center overflow-x-clip px-6">
           <div className="mx-auto w-full max-w-7xl">
@@ -47,7 +49,13 @@ export function CollageSection({
         </div>
       }
     >
-      <div ref={contentRef} className="mx-auto flex min-h-svh w-full max-w-7xl items-center px-6">
+      <div
+        ref={contentRef}
+        className="mx-auto flex min-h-0 w-full max-w-7xl flex-col justify-center px-6 py-24 lg:min-h-svh lg:py-0"
+      >
+        <div className="mb-10 lg:hidden">
+          <Collage cards={cards} side={collageSide} parallax={false} />
+        </div>
         <div
           className={`max-w-xl p-8 sm:p-12 ${collageSide === "left" ? "lg:ml-auto" : ""}`}
           style={{

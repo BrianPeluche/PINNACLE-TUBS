@@ -10,6 +10,8 @@ import { VideoBackground } from "@/lib/VideoBackground";
 export interface CollageCard {
   image?: { src: string; alt: string };
   video?: { src: string; poster: string };
+  label?: string;
+  description?: string;
 }
 
 interface CollageProps {
@@ -98,19 +100,41 @@ export function Collage({ cards, side, parallax = true }: CollageProps) {
             key={i}
             data-collage-card
             style={style}
-            className="overflow-hidden rounded-xl shadow-2xl ring-1 ring-foreground/10"
+            className="group overflow-hidden rounded-lg bg-muted shadow-2xl ring-1 ring-foreground/10"
           >
             {card.video ? (
-              <VideoBackground src={card.video.src} poster={card.video.poster} />
+              <>
+                <VideoBackground
+                  src={card.video.src}
+                  poster={card.video.poster}
+                  sizes="(min-width: 1024px) 40vw, 80vw"
+                />
+                <div className="absolute inset-0 bg-background/35" aria-hidden="true" />
+                <div className="absolute inset-0 bg-linear-to-t from-background/85 via-background/20 to-transparent" />
+              </>
             ) : card.image ? (
               <Image
                 src={card.image.src}
                 alt={card.image.alt}
                 fill
                 sizes="(min-width: 1024px) 40vw, 70vw"
-                className="object-cover"
+                className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
               />
             ) : null}
+            {(card.label || card.description) && (
+              <div className="absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-background/90 to-transparent p-4">
+                {card.label && (
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-foreground">
+                    {card.label}
+                  </p>
+                )}
+                {card.description && (
+                  <p className="mt-1 text-sm leading-snug text-muted-foreground">
+                    {card.description}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         );
       })}

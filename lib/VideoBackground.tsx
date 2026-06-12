@@ -22,6 +22,8 @@ interface VideoBackgroundProps {
   poster: string;
   /** Intrinsic media aspect (width/height) of the video file. */
   aspect?: number;
+  /** Responsive size hint for the poster image. */
+  sizes?: string;
 }
 
 interface BoxSize {
@@ -29,7 +31,7 @@ interface BoxSize {
   height: number;
 }
 
-export function VideoBackground({ src, poster, aspect = 16 / 9 }: VideoBackgroundProps) {
+export function VideoBackground({ src, poster, aspect = 16 / 9, sizes = "100vw" }: VideoBackgroundProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [box, setBox] = useState<BoxSize>({ width: 0, height: 0 });
@@ -117,7 +119,7 @@ export function VideoBackground({ src, poster, aspect = 16 / 9 }: VideoBackgroun
 
   return (
     <div ref={wrapperRef} className="absolute inset-0 overflow-hidden" aria-hidden="true">
-      <Image src={poster} alt="" fill sizes="100vw" className="object-cover" />
+      <Image src={poster} alt="" fill sizes={sizes} className="object-cover" />
       {videoMounted && coverStyle && (
         <video
           ref={videoRef}

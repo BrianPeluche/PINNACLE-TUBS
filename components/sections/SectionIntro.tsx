@@ -18,7 +18,7 @@ export function SectionIntro({ eyebrow, title, statement }: SectionIntroProps) {
       </p>
       <h2
         data-reveal
-        className="mt-4 text-5xl font-extrabold uppercase leading-[0.92] tracking-tight sm:text-6xl xl:text-7xl"
+        className="mt-4 text-5xl font-extrabold uppercase leading-[0.92] sm:text-6xl xl:text-7xl"
       >
         {title}
       </h2>
