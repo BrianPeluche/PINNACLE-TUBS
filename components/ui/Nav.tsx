@@ -69,7 +69,7 @@ export function Nav() {
         </a>
         {/* mirrored inset so the links sit as far from the right edge as the
             logo does from the left */}
-        <ul className="mr-8 flex items-center gap-6 text-sm text-muted-foreground">
+        <ul className="mr-8 flex items-center gap-6 text-sm uppercase text-foreground">
           {siteConfig.nav.map((item) => {
             const target = TARGETS[item.href] ?? "top";
             return (
