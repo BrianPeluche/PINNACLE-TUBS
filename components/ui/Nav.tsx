@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { scrollToTarget } from "@/lib/lenis";
+import { scrollToTarget, scrollToY } from "@/lib/lenis";
 import { siteConfig } from "@/data/site";
 
 // The site is a single scrolling page, so nav items drive smooth in-page
@@ -14,9 +14,35 @@ const TARGETS: Record<string, string> = {
   "/contact": "#contact",
 };
 
+// CalSpa logo/heading/CTA are fully blurred in across roughly the middle of
+// the pin (in by ~0.3, out from ~0.6). Land here so "Tubs" arrives on the
+// visible CTA moment rather than the dark pin start.
+const CALSPA_VISIBLE_PROGRESS = 0.45;
+
 export function Nav() {
+  // "Tubs": land inside the CalSpa pin where the content is on screen. The
+  // pinned section lives in the pin-spacer right after the #tubs anchor; its
+  // extra height is the scrubbed pin distance, so anchorTop + progress*extra
+  // is the scroll position of the visible CTA. Falls back to the plain anchor
+  // when there is no pin (reduced motion / pre-hydration), where the CalSpa
+  // content is already static and visible.
+  const goTubs = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const anchor = document.querySelector("#tubs");
+    const spacer = anchor?.nextElementSibling as HTMLElement | null;
+    const section = spacer?.querySelector("section");
+    if (!anchor || !spacer || !section || !spacer.className.includes("pin-spacer")) {
+      scrollToTarget("#tubs");
+      return;
+    }
+    const spacerTop = spacer.getBoundingClientRect().top + window.scrollY;
+    const extra = spacer.getBoundingClientRect().height - section.getBoundingClientRect().height;
+    scrollToY(spacerTop + extra * CALSPA_VISIBLE_PROGRESS);
+  };
+
   const go = (target: string) => (e: React.MouseEvent) => {
     e.preventDefault();
+    if (target === "#tubs") return goTubs(e);
     scrollToTarget(target);
   };
 

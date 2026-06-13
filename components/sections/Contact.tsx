@@ -117,44 +117,48 @@ export function Contact() {
               </a>
             </div>
 
-            <div data-reveal className="space-y-1 text-base text-muted-foreground">
+            <div data-reveal>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Visit</p>
-              <p className="text-foreground">{address.street}</p>
-              <p>
-                {address.city}, {address.state} {address.zip}
-              </p>
-              <a
-                href={mapHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 inline-block text-accent underline-offset-4 hover:underline"
-              >
-                Get directions
-              </a>
+              <div className="mt-3 space-y-1 text-base leading-relaxed text-muted-foreground">
+                <p className="text-foreground">{address.street}</p>
+                <p>
+                  {address.city}, {address.state} {address.zip}
+                </p>
+                <a
+                  href={mapHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 inline-block text-accent underline-offset-4 hover:underline"
+                >
+                  Get directions
+                </a>
+              </div>
             </div>
 
-            <div data-reveal className="space-y-2 text-base text-muted-foreground">
+            <div data-reveal>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Reach us</p>
-              <p>
-                <a href={phoneHref} className="text-foreground hover:text-accent">
-                  {phone}
+              <div className="mt-3 space-y-2 text-base leading-relaxed text-muted-foreground">
+                <p>
+                  <a href={phoneHref} className="text-foreground hover:text-accent">
+                    {phone}
+                  </a>
+                </p>
+                <p>
+                  <a href={`mailto:${email}`} className="text-foreground hover:text-accent">
+                    {email}
+                  </a>
+                </p>
+                <a
+                  href={instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Pinnacle Tubs on Instagram"
+                  className="inline-flex items-center gap-2 text-foreground hover:text-accent"
+                >
+                  <InstagramIcon />
+                  <span>@pinnacle.tubs on Instagram</span>
                 </a>
-              </p>
-              <p>
-                <a href={`mailto:${email}`} className="text-foreground hover:text-accent">
-                  {email}
-                </a>
-              </p>
-              <a
-                href={instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Pinnacle Tubs on Instagram"
-                className="inline-flex items-center gap-2 text-foreground hover:text-accent"
-              >
-                <InstagramIcon />
-                <span>@pinnacle.tubs on Instagram</span>
-              </a>
+              </div>
             </div>
           </div>
 

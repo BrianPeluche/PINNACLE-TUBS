@@ -65,7 +65,7 @@ export function IncludedWarranty() {
         className="relative z-10 mt-[-15vh] bg-background py-24 sm:py-32"
       >
         <div className="mx-auto grid max-w-7xl items-start gap-12 px-6 lg:grid-cols-[5fr_7fr] lg:gap-16">
-          <div className="space-y-10">
+          <div className="space-y-10 lg:sticky lg:top-28">
             {BLOCKS.map((block) => (
               <div key={block.heading} data-reveal>
                 <h3 className="text-2xl font-extrabold uppercase tracking-tight text-foreground sm:text-3xl">

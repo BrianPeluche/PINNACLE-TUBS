@@ -15,25 +15,27 @@ let lenisInstance: Lenis | null = null;
  * or a CSS selector (e.g. "#contact"). Uses Lenis when available; otherwise
  * native smooth scroll (reduced motion / SSR-less environments).
  */
+/** Smooth-scroll to an absolute Y position, via Lenis when available. */
+export function scrollToY(y: number) {
+  const top = Math.max(0, Math.round(y));
+  if (lenisInstance) lenisInstance.scrollTo(top);
+  else window.scrollTo({ top, behavior: "smooth" });
+}
+
 export function scrollToTarget(target: string) {
   if (typeof document === "undefined") return;
   const header = document.querySelector("header");
   const navHeight = header ? header.getBoundingClientRect().height : 0;
 
   if (target === "top") {
-    if (lenisInstance) lenisInstance.scrollTo(0);
-    else window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToY(0);
     return;
   }
 
   const el = document.querySelector(target);
   if (!el) return;
-  if (lenisInstance) {
-    lenisInstance.scrollTo(el as HTMLElement, { offset: -navHeight });
-  } else {
-    const y = el.getBoundingClientRect().top + window.scrollY - navHeight;
-    window.scrollTo({ top: y, behavior: "smooth" });
-  }
+  const y = el.getBoundingClientRect().top + window.scrollY - navHeight;
+  scrollToY(y);
 }
 
 /**
