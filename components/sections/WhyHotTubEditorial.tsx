@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { ExpandableImageCard } from "@/components/ui/ExpandableImageCard";
 import { useReveal } from "@/lib/useReveal";
-import { useScrollGradient } from "@/lib/useScrollGradient";
 import { SectionIntro } from "./SectionIntro";
 
 /**
@@ -48,8 +47,6 @@ const PORTRAIT_PHOTOS = [
 export function WhyHotTubEditorial() {
   const sectionRef = useRef<HTMLElement>(null);
   useReveal(sectionRef);
-  // Scroll-driven warm gradient for the photo-card hover rings (CalSpa sweep).
-  useScrollGradient(sectionRef);
 
   return (
     // Negative top margin overlaps the section up into the bridge's pin tail

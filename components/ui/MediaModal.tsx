@@ -70,7 +70,7 @@ export function MediaModal({ src, alt, onClose }: MediaModalProps) {
         type="button"
         aria-label="Close"
         onClick={requestClose}
-        className="absolute right-4 top-4 z-10 flex size-11 items-center justify-center rounded-full bg-foreground/10 text-2xl leading-none text-foreground transition-colors hover:bg-foreground/25"
+        className="absolute right-4 top-4 z-10 flex size-11 items-center justify-center rounded-full bg-foreground/10 text-2xl leading-none text-foreground transition-colors hover:bg-[#FFF8CC] hover:text-background focus-visible:bg-[#FFF8CC] focus-visible:text-background"
       >
         ×
       </button>

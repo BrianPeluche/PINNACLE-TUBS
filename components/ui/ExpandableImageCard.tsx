@@ -4,14 +4,6 @@ import Image from "next/image";
 import { useState } from "react";
 import { MediaModal } from "./MediaModal";
 
-// Same tight warm GTA-VI sweep as the CalSpa logo / Get-in-Touch title,
-// mirrored so the scroll-driven position shift travels and returns smoothly.
-// 165deg => mostly top-to-bottom with a slight diagonal; paired with a tall
-// background-size, its vertical position is animated by lib/useScrollGradient
-// in the owning section (selects [data-gradient-ring]).
-const RING_GRADIENT =
-  "linear-gradient(165deg, #160f24, #351236, #6d1d45, #b73555, #e8684a, #f5b64f, #e8684a, #b73555, #6d1d45, #351236, #160f24)";
-
 interface ExpandableImageCardProps {
   src: string;
   alt: string;
@@ -19,9 +11,9 @@ interface ExpandableImageCardProps {
    * or portrait (e.g. aspect-[2/3]) both work; the lightbox letterboxes
    * either orientation with object-contain. */
   aspectClassName?: string;
-  /** Opt-in GTA-style hover: no border at rest (just the photo), and on hover
-   * the photo insets while the warm CalSpa scroll-gradient ring appears around
-   * it. Defaults to the original pale-cream border (used by Contact and What's
+  /** Opt-in hover treatment: no border at rest (just the photo), then a very
+   * thin solid #FFF8CC border appears on hover/focus while the photo insets.
+   * Defaults to the original pale-cream border (used by Contact and What's
    * Included), which is left unchanged. */
   gradientHover?: boolean;
 }
@@ -29,9 +21,9 @@ interface ExpandableImageCardProps {
 /**
  * GTA-style editorial photo card. Default variant: the pale-cream frame is
  * barely-there at rest and commits on hover/keyboard focus while the photo
- * scales down. gradientHover variant: borderless at rest, with a scroll-driven
- * warm gradient ring that appears as the photo insets on hover. Click opens a
- * full-screen lightbox (MediaModal).
+ * scales down. gradientHover variant: borderless at rest, with a very thin
+ * solid #FFF8CC border that appears as the photo insets on hover. Click opens
+ * a full-screen lightbox (MediaModal).
  */
 export function ExpandableImageCard({
   src,
@@ -41,15 +33,6 @@ export function ExpandableImageCard({
 }: ExpandableImageCardProps) {
   const [open, setOpen] = useState(false);
 
-  const expandIcon = (
-    <span
-      aria-hidden="true"
-      className="absolute bottom-4 right-4 z-10 flex size-9 items-center justify-center rounded-full bg-background/70 text-sm text-foreground opacity-80 transition-opacity group-hover:opacity-100"
-    >
-      ⤢
-    </span>
-  );
-
   if (gradientHover) {
     return (
       <>
@@ -57,41 +40,27 @@ export function ExpandableImageCard({
           type="button"
           onClick={() => setOpen(true)}
           aria-label={`Expand photo: ${alt}`}
-          className="group relative block w-full cursor-zoom-in bg-background p-0.75 outline-none sm:p-1"
+          // 1px border, transparent at rest (no border, just the photo) and
+          // #FFF8CC on hover/focus — a very thin premium frame. border-box +
+          // always-present border = no layout shift when the color appears.
+          className="group relative block w-full cursor-zoom-in border border-transparent bg-background outline-none transition-colors duration-300 hover:border-[#FFF8CC] focus-visible:border-[#FFF8CC]"
         >
-          {/* Warm gradient ring: hidden at rest (so the card reads as just the
-              photo on the dark page), fades in on hover/focus. The inset photo
-              reveals it around its edges; the thin frame comes from the padding.
-              background-position is scrubbed vertically by scroll (see
-              useScrollGradient), reversing on scroll-up. */}
-          <span
-            data-gradient-ring
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
-            style={{
-              backgroundImage: RING_GRADIENT,
-              backgroundSize: "100% 200%",
-              backgroundPosition: "50% 0%",
-            }}
-          />
-          {/* The photo scales down on hover/focus so the ring shows around it
-              (the GTA inset feel); its own dark bg keeps the rest state clean. */}
-          <span
-            className={`relative block w-full overflow-hidden bg-background transition-transform duration-500 ease-out group-hover:scale-[0.97] group-focus-visible:scale-[0.97] ${aspectClassName}`}
-          >
+          <span className={`relative block w-full overflow-hidden bg-background ${aspectClassName}`}>
+            {/* photo insets on hover/focus, revealing a hair of dark inside the
+                thin border (the GTA inset feel) */}
             <Image
               src={src}
               alt={alt}
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover"
+              className="object-cover transition-transform duration-500 ease-out group-hover:scale-[0.97] group-focus-visible:scale-[0.97]"
             />
           </span>
-          {/* Expand affordance: warms to the accent on card hover so it reads
-              as part of the gradient-ring treatment (dark glyph stays legible). */}
+          {/* Expand affordance: turns #FFF8CC on card hover/focus to match the
+              border (dark glyph stays legible on the light fill). */}
           <span
             aria-hidden="true"
-            className="absolute bottom-4 right-4 z-10 flex size-9 items-center justify-center rounded-full bg-background/70 text-sm text-foreground opacity-80 transition-colors duration-300 group-hover:bg-accent group-hover:text-accent-foreground group-hover:opacity-100 group-focus-visible:bg-accent group-focus-visible:text-accent-foreground group-focus-visible:opacity-100"
+            className="absolute bottom-4 right-4 z-10 flex size-9 items-center justify-center rounded-full bg-background/70 text-sm text-foreground opacity-80 transition-colors duration-300 group-hover:bg-[#FFF8CC] group-hover:text-background group-hover:opacity-100 group-focus-visible:bg-[#FFF8CC] group-focus-visible:text-background group-focus-visible:opacity-100"
           >
             ⤢
           </span>
@@ -118,7 +87,12 @@ export function ExpandableImageCard({
             className="object-cover transition-transform duration-500 ease-out group-hover:scale-[0.96] group-focus-visible:scale-[0.96]"
           />
         </span>
-        {expandIcon}
+        <span
+          aria-hidden="true"
+          className="absolute bottom-4 right-4 z-10 flex size-9 items-center justify-center rounded-full bg-background/70 text-sm text-foreground opacity-80 transition-opacity group-hover:opacity-100"
+        >
+          ⤢
+        </span>
       </button>
       {open && <MediaModal src={src} alt={alt} onClose={() => setOpen(false)} />}
     </>
