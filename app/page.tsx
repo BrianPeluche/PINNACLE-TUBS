@@ -13,6 +13,10 @@ export default function Home() {
       <RelaxationInterstitial />
       <Benefits />
       <WhyHotTubEditorial />
+      {/* Nav "Tubs" target: anchors the start of the CalSpa dealer section
+          (where the CTA lives). Kept in composition so the approved
+          CalSpaDealer component stays untouched. */}
+      <div id="tubs" />
       <CalSpaDealer />
       <IncludedWarranty />
       <Contact />
