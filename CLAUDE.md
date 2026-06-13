@@ -73,6 +73,22 @@ Every change is evaluated on:
 - Do not add dependencies beyond the stack above without stating why first.
 - Never commit `node_modules`, `.env*`, or files over 50 MB (Vercel/git limits).
 
+## Approved sections — HARD BOUNDARY (do not touch)
+Everything from the top of the page through the full What's Included / Warranty section is
+approved and locked. Do NOT edit, remove, reorder, retime, restyle, rename, or refactor any
+of these, or the shared infra they depend on, without an explicit new instruction naming them:
+- Hero (`components/hero/*`)
+- Relaxation interstitial (`RelaxationInterstitial`)
+- Water bridge (`Benefits`)
+- Why buy a Pinnacle tub (`WhyHotTubEditorial`)
+- CalSpa Authorized Hot Tub Dealer (`CalSpaDealer`)
+- What's Included / Warranty (`IncludedWarranty`)
+- Shared infra these rely on: `ScrubSection`, `lib/useScrollScrub.ts`, `data/*`
+
+Only sections that appear AFTER What's Included / Warranty may be changed or removed. The
+locked page flow is: Hero → Relaxation interstitial → Water bridge → Why buy → CalSpa →
+What's Included/Warranty → Contact → Footer. Nav and Footer (in `app/layout.tsx`) stay.
+
 ## Workflow expectations
 - Work milestone by milestone (see BUILD_PROMPT.md). Do not start a milestone before the
   previous one's acceptance criteria pass.
