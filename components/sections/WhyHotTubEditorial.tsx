@@ -21,14 +21,14 @@ const COPY = {
   eyebrow: "Why buy a Pinnacle tub",
   title: "Feel better, every day",
   statement:
-    "Warm water, big results: less stress, faster recovery, deeper sleep — all season long.",
-  body: "There's a reason every good day on the mountain ends in hot water. Pinnacle Tubs builds luxury hot tubs with American-made materials — and sells, delivers, and services them from our own shop on Big Bear Blvd.",
+    "Warm water, big results: less stress, faster recovery, deeper sleep all season long.",
+  body: "Warm water therapy can help relax the muscles around the lower back and may provide relief from daily tension and stiffness. A warm soak before bed can help your body relax, improve circulation, and make it easier to wind down for the night.",
   points: [
-    "After the slopes — jets work backs, shoulders, and legs",
-    "Made in the USA — 10-year shell warranty, 5 years on equipment",
-    "Local sales, service, and repair — one crew, all year round",
+    "Relaxation in minutes",
+    "Where comfort meets quality",
+    "Spa experience, right at home",
   ],
-  closing: "Tubs are in stock now — call, or come see them running.",
+  closing: "At Pinnacle Tubs, we use only American-made materials to deliver strong, reliable, and high-quality products.",
 } as const;
 
 const LANDSCAPE_PHOTOS = [
@@ -41,7 +41,7 @@ const LANDSCAPE_PHOTOS = [
 
 const PORTRAIT_PHOTOS = [
   { src: "/assets/dsc01673-web.jpg", alt: "Freshly delivered hot tub on a Big Bear deck" },
-  { src: "/assets/dsc08488-web.jpg", alt: "Close-up of water-care treatment poured tub-side" },
+  { src: "/assets/img3821-web.jpg", alt: "An installed Pinnacle spa at golden hour on a Big Bear deck" },
 ] as const;
 
 export function WhyHotTubEditorial() {

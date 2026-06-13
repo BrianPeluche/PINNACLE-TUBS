@@ -27,6 +27,13 @@ interface ScrubSectionProps {
    * instead of the default left-aligned text column. Both blur in and out on
    * the scrubbed timeline. */
   centered?: boolean;
+  /** Spread the content blur/fade across more of the pin so it moves through
+   * the transition more gradually (same pin length, slower-feeling motion). */
+  gradualContent?: boolean;
+  /** Add extra tweens (e.g. a scroll-driven gradient) to the SAME scrubbed
+   * timeline, so they stay locked to the pin's scroll and reverse with it.
+   * Receives the content wrapper to scope element lookups. */
+  contentBuild?: (tl: ScrubTimeline, contentEl: HTMLDivElement) => void;
   children?: ReactNode;
 }
 
@@ -46,6 +53,8 @@ export function ScrubSection({
   video,
   overlay = "standard",
   centered = false,
+  gradualContent = false,
+  contentBuild,
   children,
 }: ScrubSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -109,18 +118,23 @@ export function ScrubSection({
       // Blur in with the pin start, blur out into dark before the exit veil
       // closes — the same motion language as the relaxation line, so content
       // sections chain into the next with no hard cut. ease "none" => scrubs
-      // reversibly.
+      // reversibly. gradualContent spreads the same in/out across more of the
+      // pin so the motion reads slower within the identical pin length.
+      const inDur = gradualContent ? 0.3 : 0.16;
+      const outStart = gradualContent ? 0.6 : 0.72;
+      const outDur = gradualContent ? 0.32 : 0.18;
       tl.fromTo(
         contentRef.current,
         { opacity: 0, y: 36, filter: "blur(16px)" },
-        { opacity: 1, y: 0, filter: "blur(0px)", ease: "none", duration: 0.16 },
+        { opacity: 1, y: 0, filter: "blur(0px)", ease: "none", duration: inDur },
         0,
       );
       tl.to(
         contentRef.current,
-        { opacity: 0, y: -24, filter: "blur(16px)", ease: "none", duration: 0.18 },
-        0.72,
+        { opacity: 0, y: -24, filter: "blur(16px)", ease: "none", duration: outDur },
+        outStart,
       );
+      contentBuild?.(tl, contentRef.current);
     }
     // Entrance veil (light/none overlays): the section slides up under the
     // previous pin BEFORE its own pin starts, so a thin wash would bleed
@@ -156,7 +170,7 @@ export function ScrubSection({
         0.68,
       );
     }
-  }, [entranceVeilOpacity]);
+  }, [entranceVeilOpacity, gradualContent, contentBuild]);
 
   // keyed on videoMounted, not `enabled`: the <video> mounts only after the
   // box is measured, and the pin/timeline must build after the element exists

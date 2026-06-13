@@ -1,12 +1,18 @@
 "use client";
 
+import { useCallback } from "react";
 import { ScrubSection } from "./ScrubSection";
+import type { ScrubTimeline } from "@/lib/useScrollScrub";
 
 /**
  * Premium selling moment in the cinematic chain: shooting-water footage
  * scrubs behind a centered Cal Spas wordmark, heading, and CTA that blur in
- * and out on the same scrubbed timeline as every other section. Assets live
- * here because data/site.ts is frozen for this change.
+ * and out on the same scrubbed timeline as every other section. The wordmark
+ * is filled by a wide multi-stop gradient (cream → gold → amber → coral →
+ * soft red → spa blue) whose position is driven by scroll, so the colors
+ * travel through the mark as you move — a GTA-style sweep in the Pinnacle
+ * palette, locked to the pin so it reverses on scroll-up. Assets live here
+ * because data/site.ts is frozen for this change.
  */
 const VIDEO = {
   src: "/assets/shooting-water.mp4",
@@ -16,19 +22,48 @@ const VIDEO = {
 // native logo aspect (white script wordmark on transparent)
 const LOGO_ASPECT = "1192 / 420";
 
+// Pinnacle/CalSpa-friendly sweep; ends where it starts so the scroll-driven
+// position shift cycles smoothly and the mark stays readable throughout.
+const LOGO_GRADIENT =
+  "linear-gradient(90deg, #f4f1ea, #e3a23c, #e08a3c, #e6a4ad, #d76d7f, #7fb8cc, #e6a4ad, #e3a23c, #f4f1ea)";
+
 export function CalSpaDealer() {
+  const contentBuild = useCallback((tl: ScrubTimeline, contentEl: HTMLDivElement) => {
+    const logo = contentEl.querySelector<HTMLElement>("[data-calspa-logo]");
+    if (!logo) return;
+    // Scroll-driven color travel across the whole pin (ease none => reverses
+    // frame-for-frame). background-size is 200%, so a full 200% position shift
+    // walks the sweep cleanly through the wordmark.
+    tl.fromTo(
+      logo,
+      { backgroundPosition: "0% 50%" },
+      { backgroundPosition: "-200% 50%", ease: "none", duration: 1 },
+      0,
+    );
+  }, []);
+
   return (
-    <ScrubSection video={VIDEO} overlay="none" centered>
+    <ScrubSection
+      video={VIDEO}
+      overlay="none"
+      centered
+      gradualContent
+      contentBuild={contentBuild}
+    >
       <div className="flex flex-col items-center gap-7 sm:gap-9">
         {/* The white wordmark drives a CSS mask so the gradient fills its
-            shape — a tasteful amber→dusk treatment in the site palette
-            (premium, not literal GTA colors). Decorative, so role=img. */}
+            shape; the gradient itself travels with scroll (see contentBuild).
+            Decorative, so role=img. */}
         <div
+          data-calspa-logo
           role="img"
           aria-label="Cal Spas"
-          className="w-[min(78vw,460px)] bg-gradient-to-r from-accent via-dusk to-accent drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]"
+          className="w-[min(78vw,460px)] drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]"
           style={{
             aspectRatio: LOGO_ASPECT,
+            backgroundImage: LOGO_GRADIENT,
+            backgroundSize: "200% 100%",
+            backgroundPosition: "0% 50%",
             WebkitMaskImage: "url(/assets/CALSPA-logo.png)",
             maskImage: "url(/assets/CALSPA-logo.png)",
             WebkitMaskSize: "contain",

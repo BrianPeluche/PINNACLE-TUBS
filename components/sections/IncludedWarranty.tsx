@@ -41,9 +41,10 @@ const BLOCKS = [
 ] as const;
 
 const PHOTOS = [
-  { src: "/assets/img3826-web.jpg", alt: "Jets churning clean, clear water at dusk" },
-  { src: "/assets/dsc08488-web.jpg", alt: "Water-care treatment poured tub-side", aspect: "aspect-[2/3]" },
-  { src: "/assets/dsc01673-web.jpg", alt: "A freshly delivered Pinnacle tub on a Big Bear deck" },
+  { src: "/assets/img3521-web.jpg", alt: "Cal Spas shells in production on the factory floor" },
+  { src: "/assets/dsc08342-web.jpg", alt: "A showroom tub with steps and a cover lifter ready to go" },
+  { src: "/assets/dsc01682-web.jpg", alt: "Close-up of a running Cal Spas tub with the brand badge" },
+  { src: "/assets/img2689-web.jpg", alt: "A truckload of new Pinnacle tubs ready for delivery" },
 ] as const;
 
 export function IncludedWarranty() {
@@ -79,16 +80,16 @@ export function IncludedWarranty() {
             ))}
           </div>
 
-          <div className="space-y-6 sm:space-y-8 lg:sticky lg:top-28">
+          <div className="space-y-6 sm:space-y-8">
             <div data-reveal>
               <ExpandableImageCard src={PHOTOS[0].src} alt={PHOTOS[0].alt} />
             </div>
-            <div className="grid gap-6 sm:grid-cols-[2fr_3fr] sm:gap-8">
+            <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
               <div data-reveal data-reveal-delay="0.1">
                 <ExpandableImageCard
                   src={PHOTOS[1].src}
                   alt={PHOTOS[1].alt}
-                  aspectClassName={PHOTOS[1].aspect}
+                  aspectClassName="aspect-[4/3]"
                 />
               </div>
               <div data-reveal data-reveal-delay="0.2">
@@ -98,6 +99,9 @@ export function IncludedWarranty() {
                   aspectClassName="aspect-[4/3]"
                 />
               </div>
+            </div>
+            <div data-reveal>
+              <ExpandableImageCard src={PHOTOS[3].src} alt={PHOTOS[3].alt} />
             </div>
           </div>
         </div>

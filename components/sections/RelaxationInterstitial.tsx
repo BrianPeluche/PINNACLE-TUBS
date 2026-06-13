@@ -6,7 +6,7 @@ import { watchBodyHeightForRefresh } from "@/lib/scrollRefresh";
 import { useHydrated } from "@/lib/useHydrated";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
-const LINE = "Experience the art of pure relaxation.";
+const LINE = "EXPERIENCE THE ART OF PURE RELAXATION.";
 
 /**
  * GTA-style interstitial between the hero and the first video bridge,
