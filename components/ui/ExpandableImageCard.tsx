@@ -6,10 +6,11 @@ import { MediaModal } from "./MediaModal";
 
 // Same tight warm GTA-VI sweep as the CalSpa logo / Get-in-Touch title,
 // mirrored so the scroll-driven position shift travels and returns smoothly.
-// Its background-position is animated by lib/useScrollGradient in the owning
-// section (selects [data-gradient-ring]).
+// 165deg => mostly top-to-bottom with a slight diagonal; paired with a tall
+// background-size, its vertical position is animated by lib/useScrollGradient
+// in the owning section (selects [data-gradient-ring]).
 const RING_GRADIENT =
-  "linear-gradient(90deg, #160f24, #351236, #6d1d45, #b73555, #e8684a, #f5b64f, #e8684a, #b73555, #6d1d45, #351236, #160f24)";
+  "linear-gradient(165deg, #160f24, #351236, #6d1d45, #b73555, #e8684a, #f5b64f, #e8684a, #b73555, #6d1d45, #351236, #160f24)";
 
 interface ExpandableImageCardProps {
   src: string;
@@ -56,20 +57,21 @@ export function ExpandableImageCard({
           type="button"
           onClick={() => setOpen(true)}
           aria-label={`Expand photo: ${alt}`}
-          className="group relative block w-full cursor-zoom-in bg-background p-1.5 outline-none sm:p-2"
+          className="group relative block w-full cursor-zoom-in bg-background p-0.75 outline-none sm:p-1"
         >
           {/* Warm gradient ring: hidden at rest (so the card reads as just the
               photo on the dark page), fades in on hover/focus. The inset photo
-              reveals it around its edges; background-position is scrubbed by
-              scroll (see useScrollGradient), reversing on scroll-up. */}
+              reveals it around its edges; the thin frame comes from the padding.
+              background-position is scrubbed vertically by scroll (see
+              useScrollGradient), reversing on scroll-up. */}
           <span
             data-gradient-ring
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
             style={{
               backgroundImage: RING_GRADIENT,
-              backgroundSize: "200% 100%",
-              backgroundPosition: "0% 50%",
+              backgroundSize: "100% 200%",
+              backgroundPosition: "50% 0%",
             }}
           />
           {/* The photo scales down on hover/focus so the ring shows around it
@@ -85,7 +87,14 @@ export function ExpandableImageCard({
               className="object-cover"
             />
           </span>
-          {expandIcon}
+          {/* Expand affordance: warms to the accent on card hover so it reads
+              as part of the gradient-ring treatment (dark glyph stays legible). */}
+          <span
+            aria-hidden="true"
+            className="absolute bottom-4 right-4 z-10 flex size-9 items-center justify-center rounded-full bg-background/70 text-sm text-foreground opacity-80 transition-colors duration-300 group-hover:bg-accent group-hover:text-accent-foreground group-hover:opacity-100 group-focus-visible:bg-accent group-focus-visible:text-accent-foreground group-focus-visible:opacity-100"
+          >
+            ⤢
+          </span>
         </button>
         {open && <MediaModal src={src} alt={alt} onClose={() => setOpen(false)} />}
       </>

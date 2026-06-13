@@ -8,10 +8,11 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
  * Drives the `background-position` of every `[data-gradient-ring]` inside the
  * scope from the scope's scroll progress, scrubbed — the same warm CalSpa
  * sweep used on the Cal Spas wordmark and the Get-in-Touch title, here feeding
- * the photo-card hover rings. background-size is 200%, so a full 200% shift
- * walks the sweep through the ring; scrub means it reverses on scroll-up.
- * Under reduced motion it does nothing and the ring stays at its static
- * default position (the hover ring still appears, just without travel).
+ * the photo-card hover rings. The ring gradient is mostly vertical with a tall
+ * (100% x 200%) background, so the position travels on the Y axis; scrub means
+ * it reverses on scroll-up. Under reduced motion it does nothing and the ring
+ * stays at its static default position (the hover ring still appears, just
+ * without travel).
  */
 export function useScrollGradient(scopeRef: RefObject<HTMLElement | null>) {
   const reducedMotion = useReducedMotion();
@@ -26,9 +27,9 @@ export function useScrollGradient(scopeRef: RefObject<HTMLElement | null>) {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         rings,
-        { backgroundPosition: "0% 50%" },
+        { backgroundPosition: "50% 0%" },
         {
-          backgroundPosition: "-200% 50%",
+          backgroundPosition: "50% -200%",
           ease: "none",
           scrollTrigger: {
             trigger: scope,

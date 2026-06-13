@@ -10,7 +10,7 @@ interface MediaModalProps {
   onClose: () => void;
 }
 
-const EXIT_MS = 200;
+const EXIT_MS = 300;
 
 /** Full-screen lightbox: Escape closes, backdrop click closes, image fits
  * the viewport without cropping. Fades + scales in on open and out on close
@@ -25,10 +25,18 @@ export function MediaModal({ src, alt, onClose }: MediaModalProps) {
     window.setTimeout(onClose, EXIT_MS);
   }, [onClose]);
 
-  // enter on the frame after mount
+  // enter after the initial (opacity-0 / scaled) state has painted — a double
+  // rAF guarantees the browser commits that frame first, so the transition
+  // actually runs instead of snapping straight to the open state.
   useEffect(() => {
-    const raf = requestAnimationFrame(() => setShow(true));
-    return () => cancelAnimationFrame(raf);
+    let inner = 0;
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setShow(true));
+    });
+    return () => {
+      cancelAnimationFrame(outer);
+      cancelAnimationFrame(inner);
+    };
   }, []);
 
   // escape to close + lock body scroll while open
@@ -53,7 +61,7 @@ export function MediaModal({ src, alt, onClose }: MediaModalProps) {
       role="dialog"
       aria-modal="true"
       aria-label={alt}
-      className={`fixed inset-0 z-60 flex items-center justify-center bg-background/95 p-4 transition-opacity duration-200 ease-out sm:p-10 ${
+      className={`fixed inset-0 z-60 flex items-center justify-center bg-background/95 p-4 transition-opacity duration-300 ease-out sm:p-10 ${
         show ? "opacity-100" : "opacity-0"
       }`}
       onClick={requestClose}
@@ -67,8 +75,8 @@ export function MediaModal({ src, alt, onClose }: MediaModalProps) {
         ×
       </button>
       <div
-        className={`relative size-full max-w-6xl transition-all duration-200 ease-out ${
-          show ? "scale-100 opacity-100" : "scale-95 opacity-0"
+        className={`relative size-full max-w-6xl transition-all duration-300 ease-out ${
+          show ? "scale-100 opacity-100" : "scale-[0.94] opacity-0"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
