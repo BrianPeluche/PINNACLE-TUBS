@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# raw camera/source originals — only the optimized -web.jpg / -scrub.mp4 derivatives are committed
+public/assets/*.jpeg
+public/assets/JACUZZI-WATER-Better.mp4

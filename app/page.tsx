@@ -1,12 +1,11 @@
 import { Hero } from "@/components/hero/Hero";
 import { Benefits } from "@/components/sections/Benefits";
-import { CalSpas } from "@/components/sections/CalSpas";
+import { CalSpaDealer } from "@/components/sections/CalSpaDealer";
 import { CurrentModels } from "@/components/sections/CurrentModels";
 import { Gallery } from "@/components/sections/Gallery";
-import { Included } from "@/components/sections/Included";
+import { IncludedWarranty } from "@/components/sections/IncludedWarranty";
 import { QuoteBand } from "@/components/sections/QuoteBand";
 import { RelaxationInterstitial } from "@/components/sections/RelaxationInterstitial";
-import { Warranty } from "@/components/sections/Warranty";
 import { WhyHotTubEditorial } from "@/components/sections/WhyHotTubEditorial";
 import { siteConfig } from "@/data/site";
 
@@ -18,13 +17,12 @@ export default function Home() {
       <RelaxationInterstitial />
       <Benefits />
       <WhyHotTubEditorial />
+      <CalSpaDealer />
+      <IncludedWarranty />
       <QuoteBand text={snowQuote.text} image={snowQuote.image} />
       <CurrentModels />
-      <Included />
       <Gallery />
       <QuoteBand text={serviceQuote.text} image={serviceQuote.image} />
-      <CalSpas />
-      <Warranty />
     </>
   );
 }

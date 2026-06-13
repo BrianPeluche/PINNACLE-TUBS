@@ -23,6 +23,10 @@ interface ScrubSectionProps {
    * wash entirely for clean (watermark-free) footage while keeping the
    * dark entrance veil; default is "standard". */
   overlay?: "standard" | "light" | "none";
+  /** Centered "title card" content (logo/heading/CTA) over a soft vignette,
+   * instead of the default left-aligned text column. Both blur in and out on
+   * the scrubbed timeline. */
+  centered?: boolean;
   children?: ReactNode;
 }
 
@@ -41,6 +45,7 @@ export function ScrubSection({
   statement,
   video,
   overlay = "standard",
+  centered = false,
   children,
 }: ScrubSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -101,13 +106,21 @@ export function ScrubSection({
 
   const build = useCallback((tl: ScrubTimeline) => {
     if (contentRef.current) {
+      // Blur in with the pin start, blur out into dark before the exit veil
+      // closes — the same motion language as the relaxation line, so content
+      // sections chain into the next with no hard cut. ease "none" => scrubs
+      // reversibly.
       tl.fromTo(
         contentRef.current,
-        { opacity: 0, y: 36 },
-        { opacity: 1, y: 0, ease: "none", duration: 0.15 },
+        { opacity: 0, y: 36, filter: "blur(16px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", ease: "none", duration: 0.16 },
         0,
       );
-      tl.to(contentRef.current, { opacity: 0.35, y: -18, ease: "none", duration: 0.12 }, 0.88);
+      tl.to(
+        contentRef.current,
+        { opacity: 0, y: -24, filter: "blur(16px)", ease: "none", duration: 0.18 },
+        0.72,
+      );
     }
     // Entrance veil (light/none overlays): the section slides up under the
     // previous pin BEFORE its own pin starts, so a thin wash would bleed
@@ -196,7 +209,7 @@ export function ScrubSection({
           aria-hidden="true"
         />
       )}
-      {hasContent && (
+      {hasContent && !centered && (
         // directional gradient exists for text legibility — a pure bridge
         // keeps the footage open edge-to-edge
         <div
@@ -229,7 +242,26 @@ export function ScrubSection({
           aria-hidden="true"
         />
       )}
-      {hasContent && (
+      {hasContent && centered && (
+        <div
+          ref={contentRef}
+          className="relative flex h-full flex-col items-center justify-center px-6 text-center"
+        >
+          {/* soft center vignette for legibility over open footage; fades with
+              the content so the water reads clean on either side of the hold */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(10,10,12,0.62),rgba(10,10,12,0.12)_72%)]"
+            aria-hidden="true"
+          />
+          <div className="relative mx-auto w-full max-w-4xl">
+            {(title || eyebrow) && (
+              <SectionIntro eyebrow={eyebrow ?? ""} title={title ?? ""} statement={statement} />
+            )}
+            {children}
+          </div>
+        </div>
+      )}
+      {hasContent && !centered && (
         <div ref={contentRef} className="relative flex h-full items-center">
           <div className="mx-auto w-full max-w-7xl px-6">
             <div className="max-w-xl">
