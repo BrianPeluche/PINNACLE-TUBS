@@ -5,27 +5,29 @@ import { ScrubSection } from "./ScrubSection";
 import type { ScrubTimeline } from "@/lib/useScrollScrub";
 
 /**
- * Premium selling moment in the cinematic chain: shooting-water footage
- * scrubs behind a centered Cal Spas wordmark, heading, and CTA that blur in
- * and out on the same scrubbed timeline as every other section. The wordmark
- * is filled by a wide multi-stop gradient (cream → gold → amber → coral →
- * soft red → spa blue) whose position is driven by scroll, so the colors
- * travel through the mark as you move — a GTA-style sweep in the Pinnacle
- * palette, locked to the pin so it reverses on scroll-up. Assets live here
- * because data/site.ts is frozen for this change.
+ * Premium selling moment in the cinematic chain: the dedicated CalSpa
+ * footage scrubs behind a centered Cal Spas wordmark, heading, and CTA that
+ * blur in and out on the same scrubbed timeline as every other section. The
+ * wordmark is filled by a tight warm gradient (dark purple → plum → burgundy
+ * → pink/red → orange → yellow-orange) whose position is driven by scroll, so
+ * the colors travel through the mark as you move — the GTA VI sweep, locked to
+ * the pin so it reverses on scroll-up. Assets live here because data/site.ts
+ * is frozen for this change.
  */
 const VIDEO = {
-  src: "/assets/shooting-water.mp4",
-  poster: "/assets/shooting-water-poster.jpg",
+  src: "/assets/calspa-sec-vid-scrub.mp4",
+  poster: "/assets/calspa-sec-vid-poster.jpg",
 };
 
 // native logo aspect (white script wordmark on transparent)
 const LOGO_ASPECT = "1192 / 420";
 
-// Pinnacle/CalSpa-friendly sweep; ends where it starts so the scroll-driven
-// position shift cycles smoothly and the mark stays readable throughout.
+// Tight warm GTA-VI range only (dark purple → plum → burgundy → pink/red →
+// orange → yellow-orange brightest). Mirrored back to the dark end so the
+// scroll-driven position shift travels and returns smoothly with no hard
+// color jump at the wrap, while the mark stays readable throughout.
 const LOGO_GRADIENT =
-  "linear-gradient(90deg, #f4f1ea, #e3a23c, #e08a3c, #e6a4ad, #d76d7f, #7fb8cc, #e6a4ad, #e3a23c, #f4f1ea)";
+  "linear-gradient(90deg, #160f24, #351236, #6d1d45, #b73555, #e8684a, #f5b64f, #e8684a, #b73555, #6d1d45, #351236, #160f24)";
 
 export function CalSpaDealer() {
   const contentBuild = useCallback((tl: ScrubTimeline, contentEl: HTMLDivElement) => {
