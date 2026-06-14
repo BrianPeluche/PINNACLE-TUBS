@@ -81,7 +81,7 @@ export function WhyHotTubEditorial() {
 
         <div className="space-y-6 sm:space-y-8">
           <div data-reveal>
-            <ExpandableImageCard src={LANDSCAPE_PHOTOS[0].src} alt={LANDSCAPE_PHOTOS[0].alt} gradientHover />
+            <ExpandableImageCard src={LANDSCAPE_PHOTOS[0].src} alt={LANDSCAPE_PHOTOS[0].alt} />
           </div>
           <div className="grid gap-6 sm:grid-cols-[3fr_2fr] sm:gap-8">
             <div data-reveal data-reveal-delay="0.1">
@@ -89,7 +89,6 @@ export function WhyHotTubEditorial() {
                 src={LANDSCAPE_PHOTOS[1].src}
                 alt={LANDSCAPE_PHOTOS[1].alt}
                 aspectClassName="aspect-[4/3]"
-                gradientHover
               />
             </div>
             <div data-reveal data-reveal-delay="0.2">
@@ -97,12 +96,11 @@ export function WhyHotTubEditorial() {
                 src={PORTRAIT_PHOTOS[0].src}
                 alt={PORTRAIT_PHOTOS[0].alt}
                 aspectClassName="aspect-[2/3]"
-                gradientHover
               />
             </div>
           </div>
           <div data-reveal>
-            <ExpandableImageCard src={LANDSCAPE_PHOTOS[2].src} alt={LANDSCAPE_PHOTOS[2].alt} gradientHover />
+            <ExpandableImageCard src={LANDSCAPE_PHOTOS[2].src} alt={LANDSCAPE_PHOTOS[2].alt} />
           </div>
           {/* close-up row mirrors row two (portrait leads) so the stack
               alternates instead of reading as a grid */}
@@ -112,7 +110,6 @@ export function WhyHotTubEditorial() {
                 src={PORTRAIT_PHOTOS[1].src}
                 alt={PORTRAIT_PHOTOS[1].alt}
                 aspectClassName="aspect-[2/3]"
-                gradientHover
               />
             </div>
             <div data-reveal data-reveal-delay="0.1">
@@ -120,12 +117,11 @@ export function WhyHotTubEditorial() {
                 src={LANDSCAPE_PHOTOS[3].src}
                 alt={LANDSCAPE_PHOTOS[3].alt}
                 aspectClassName="aspect-[4/3]"
-                gradientHover
               />
             </div>
           </div>
           <div data-reveal>
-            <ExpandableImageCard src={LANDSCAPE_PHOTOS[4].src} alt={LANDSCAPE_PHOTOS[4].alt} gradientHover />
+            <ExpandableImageCard src={LANDSCAPE_PHOTOS[4].src} alt={LANDSCAPE_PHOTOS[4].alt} />
           </div>
         </div>
       </div>
